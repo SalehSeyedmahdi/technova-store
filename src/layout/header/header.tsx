@@ -18,16 +18,16 @@ export default function Header() {
 			</div>
 			<ol className="hidden md:flex md:justify-center md:items-center md:gap-4 lg:gap-10 md:text-gray-600">
 				<li className="cursor-pointer hover:text-blue-700 hover:border-b-2 hover:rounded-sm">
-					درباره ما
-				</li>
-				<li className="cursor-pointer hover:text-blue-700 hover:border-b-2 hover:rounded-sm">
-					لپ تاپ
+					ساعت هوشمند
 				</li>
 				<li className="cursor-pointer hover:text-blue-700 hover:border-b-2 hover:rounded-sm">
 					موبایل
 				</li>
 				<li className="cursor-pointer hover:text-blue-700 hover:border-b-2 hover:rounded-sm">
-					محصولات
+					تبلت
+				</li>
+				<li className="cursor-pointer hover:text-blue-700 hover:border-b-2 hover:rounded-sm">
+					لپ تاپ
 				</li>
 			</ol>
 			<div className="hidden md:flex md:justify-center md:items-center md:gap-5">
