@@ -8,7 +8,7 @@ export default function Header() {
 			<img
 				src="/assets/svg/user.svg"
 				className="w-[23px] h-[23px] cursor-pointer md:hidden"
-				onClick={() => router.push("/")}
+				onClick={() => router.push("/login")}
 			/>
 			<div className="hidden md:flex md:justify-center md:items-center md:gap-[16px]">
 				<div className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer">
@@ -51,6 +51,7 @@ export default function Header() {
 				src="/assets/images/logo.png"
 				alt="لوگو"
 				className="w-[110px] h-[55px] md:hidden"
+				onClick={() => router.push("/")}
 			/>
 			<img src="/assets/svg/menu.svg" className="w-[24px] h-[24px] md:hidden" />
 		</header>
