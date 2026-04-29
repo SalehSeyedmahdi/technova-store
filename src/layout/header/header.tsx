@@ -1,13 +1,22 @@
+"use client";
+import { useRouter } from "next/navigation";
+
 export default function Header() {
+	const router = useRouter();
 	return (
-		<header className="w-full fixed top-0 flex justify-between items-center font-[Hamishe] text-[20px] bg-[#ffffff] shadow-sm p-[2px] pl-[14px] pr-[14px]">
+		<header className="w-full fixed top-0 flex justify-between items-center font-[yekanBakh] text-[20px] bg-[#ffffff] shadow-sm p-[2px] pl-[14px] pr-[14px]">
 			<img
 				src="/assets/svg/user.svg"
 				className="w-[23px] h-[23px] cursor-pointer md:hidden"
+				onClick={() => router.push("/")}
 			/>
 			<div className="hidden md:flex md:justify-center md:items-center md:gap-[16px]">
 				<div className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer">
-					<img src="/assets/svg/user.svg" className="w-[24px] h-[24px]" />
+					<img
+						src="/assets/svg/user.svg"
+						className="w-[24px] h-[24px]"
+						onClick={() => router.push("/login")}
+					/>
 				</div>
 				<div className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer">
 					<img src="/assets/svg/cart.svg" className="w-[24px] h-[24px]" />
@@ -35,6 +44,7 @@ export default function Header() {
 					src="/assets/images/logo.png"
 					alt="لوگو"
 					className="w-[140px] h-[70px] cursor-pointer"
+					onClick={() => router.push("/")}
 				/>
 			</div>
 			<img
