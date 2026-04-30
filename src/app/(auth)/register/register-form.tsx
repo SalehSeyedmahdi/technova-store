@@ -1,13 +1,35 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+type FormFields = {
+	name: string;
+	email: string;
+	password: string;
+};
 
 export default function RegisterForm() {
 	const router = useRouter();
+	const [showPassword, setShowPassword] = useState(false);
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm<FormFields>();
+
+	const onSubmit: SubmitHandler<FormFields> = (data) => {
+		console.log(data);
+		reset();
+		router.push("/login");
+	};
 	return (
 		<form
 			className="flex flex-col justify-between items-center gap-10 bg-white rounded-2xl p-8"
 			dir="rtl"
+			onSubmit={handleSubmit(onSubmit)}
 		>
 			<div className="flex flex-col justify-center items-center">
 				<img
@@ -19,7 +41,7 @@ export default function RegisterForm() {
 					اطلاعات خود را برای ثبت نام وارد کنید
 				</p>
 			</div>
-			<div className="flex flex-col gap-4">
+			<div className="flex flex-col gap-5">
 				<div className="flex flex-col justify-center items-start gap-1">
 					<label className="text-[14px] text-gray-700">
 						نام و نام خانوادگی
@@ -30,10 +52,22 @@ export default function RegisterForm() {
 							className="w-5 h-5 absolute right-2 top-3"
 						/>
 						<input
-							type="email"
+							{...register("name", {
+								required: "نام کامل الزامی است",
+								pattern: {
+									value: /^[آ-ی]{2,}(\s[آ-ی]{2,})+$/,
+									message: "نام کامل (فقط حروف فارسی) را وارد کنید",
+								},
+							})}
+							type="text"
 							className="text-[14px] border border-gray-400 outline-none rounded-xl p-3 pr-9 pl-9"
 							placeholder="نام کامل خود را وارد کنید"
 						/>
+						{errors.name && (
+							<p className="absolute right-2 text-[12px] text-red-600">
+								{errors.name.message}
+							</p>
+						)}
 					</label>
 				</div>
 				<div className="flex flex-col justify-center items-start gap-1">
@@ -44,10 +78,22 @@ export default function RegisterForm() {
 							className="w-5 h-5 absolute right-2 top-3"
 						/>
 						<input
+							{...register("email", {
+								required: "ایمیل الزامی است",
+								pattern: {
+									value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+									message: "فرمت ایمیل معتبر نیست",
+								},
+							})}
 							type="email"
 							className="text-[14px] border border-gray-400 outline-none rounded-xl p-3 pr-9 pl-9"
 							placeholder="ایمیل خود را وارد کنید"
 						/>
+						{errors.email && (
+							<p className="absolute right-2 text-[12px] text-red-600">
+								{errors.email.message}
+							</p>
+						)}
 					</label>
 				</div>
 				<div className="flex flex-col justify-center items-start gap-1">
@@ -60,18 +106,37 @@ export default function RegisterForm() {
 						<img
 							src="assets/svg/show.svg"
 							className="w-5.5 h-5.5 absolute top-3 left-2 hover:opacity-60 cursor-pointer"
+							onClick={() => setShowPassword((prev) => !prev)}
 						/>
 						<input
-							type="password"
+							{...register("password", {
+								required: "رمز عبور الزامی است",
+								minLength: {
+									value: 8,
+									message: "رمز عبور باید حداقل 8 کاراکتر باشد",
+								},
+								pattern: {
+									value:
+										/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+									message:
+										"رمز عبور باید شامل حروف بزرگ، کوچک، عدد و کاراکتر خاص باشد",
+								},
+							})}
+							type={showPassword ? "text" : "password"}
 							className="text-[14px] border border-gray-400 outline-none rounded-xl p-3 pr-9 pl-9"
 							placeholder="رمز عبور خود را وارد کنید"
 						/>
+						{errors.password && (
+							<p className="absolute right-2 text-[12px] text-red-600">
+								{errors.password.message}
+							</p>
+						)}
 					</label>
 				</div>
 			</div>
 			<button
 				className="flex justify-center items-center text-white bg-blue-800 hover:opacity-60 cursor-pointer rounded-xl p-3 pr-22.5 pl-22.5"
-				type="button"
+				type="submit"
 			>
 				ثبت نام
 			</button>
