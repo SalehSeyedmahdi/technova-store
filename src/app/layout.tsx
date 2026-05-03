@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import { ToastContainer } from "react-toastify";
+import { Bounce } from "react-toastify/unstyled";
 import "./globals.css";
 
 const yekanBakh = localFont({
@@ -40,7 +42,23 @@ export default function RootLayout({
 			lang="fa"
 			className={`${geistSans.variable} ${geistMono.variable} ${yekanBakh.variable} h-full antialiased`}
 		>
-			<body className="min-h-full flex flex-col">{children}</body>
+			<body className="min-h-full flex flex-col">
+				{children}
+				<ToastContainer
+					position="top-right"
+					autoClose={3000}
+					hideProgressBar={false}
+					newestOnTop={false}
+					closeOnClick={false}
+					rtl
+					pauseOnFocusLoss
+					draggable
+					pauseOnHover
+					theme="colored"
+					transition={Bounce}
+					className="font-[YekanBakh] font-bold text-[14px]"
+				/>
+			</body>
 		</html>
 	);
 }

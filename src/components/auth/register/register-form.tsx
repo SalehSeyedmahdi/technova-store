@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 type FormFields = {
 	name: string;
@@ -28,9 +29,13 @@ export default function RegisterForm() {
 			const res = await axios.post(`${BASE_URL}/api/auth/register`, data);
 			console.log(res);
 			reset();
-			router.push("/login");
+			toast.success("ثبت‌نام با موفقیت انجام شد.");
+			setTimeout(() => {
+				router.push("/login");
+			}, 1500);
 		} catch (error) {
 			console.error(error);
+			toast.error("ایمیل وارد شده از قبل وجود دارد.");
 		}
 	};
 	return (
