@@ -1,4 +1,4 @@
-import LoginForm from "./login-form";
+import LoginForm from "@/components/auth/login/login-form";
 
 export const metadata = {
 	title: "احراز هویت | ورود به حساب کاربری",

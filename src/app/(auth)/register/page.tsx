@@ -1,4 +1,4 @@
-import RegisterForm from "./register-form";
+import RegisterForm from "@/components/auth/register/register-form";
 
 export const metadata = {
 	title: "احراز هویت | ثبت نام",

@@ -1,8 +1,11 @@
 "use client";
 
+import { BASE_URL } from "@/constants/BASE_URL";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 type FormFields = {
 	name: string;
@@ -20,10 +23,20 @@ export default function RegisterForm() {
 		formState: { errors },
 	} = useForm<FormFields>();
 
-	const onSubmit: SubmitHandler<FormFields> = (data) => {
-		console.log(data);
-		reset();
-		router.push("/login");
+	const onSubmit: SubmitHandler<FormFields> = async (data) => {
+		try {
+			console.log(data);
+			const res = await axios.post(`${BASE_URL}/api/auth/register`, data);
+			console.log(res);
+			reset();
+			toast.success("ثبت‌نام با موفقیت انجام شد.");
+			setTimeout(() => {
+				router.push("/login");
+			}, 1500);
+		} catch (error) {
+			console.error(error);
+			toast.error("ایمیل وارد شده از قبل وجود دارد.");
+		}
 	};
 	return (
 		<form
@@ -86,7 +99,8 @@ export default function RegisterForm() {
 								},
 							})}
 							type="email"
-							className="text-[14px] border border-gray-400 outline-none rounded-xl p-3 pr-9 pl-9"
+							dir="ltr"
+							className="text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3 pr-9 pl-9"
 							placeholder="ایمیل خود را وارد کنید"
 						/>
 						{errors.email && (
@@ -123,7 +137,8 @@ export default function RegisterForm() {
 								},
 							})}
 							type={showPassword ? "text" : "password"}
-							className="text-[14px] border border-gray-400 outline-none rounded-xl p-3 pr-9 pl-9"
+							dir="ltr"
+							className="text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3 pr-9 pl-9"
 							placeholder="رمز عبور خود را وارد کنید"
 						/>
 						{errors.password && (

@@ -5,7 +5,9 @@ export default function NotFound() {
 				<div className="w-full h-3/30 absolute top-0 bg-blue-700 rounded-t-xl"></div>
 				<div className="flex flex-col justify-center items-center">
 					<h1 className="font-bold text-[120px]">404</h1>
-					<h2 className="text-[24px]">Page Not Found</h2>
+					<h2 className="font-bold font-[YekanBakh] text-[24px]">
+						صفحه مورد نظر یافت نشد
+					</h2>
 				</div>
 			</div>
 		</div>
