@@ -48,7 +48,7 @@ export default function LoginForm() {
 			toast.success("ورود با موفقیت انجام شد.");
 			setTimeout(() => {
 				router.push("/");
-			}, 1500);
+			}, 1000);
 		} catch (error) {
 			console.error(error);
 			toast.error("ایمیل یا رمز عبور اشتباه است.");
