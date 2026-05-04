@@ -1,8 +1,12 @@
 "use client";
 
+import { BASE_URL } from "@/constants/BASE_URL";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useCookies } from "react-cookie";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 type FormFields = {
 	email: string;
@@ -12,6 +16,7 @@ type FormFields = {
 export default function LoginForm() {
 	const router = useRouter();
 	const [showPassword, setShowPassword] = useState(false);
+	const [cookies, setCookies] = useCookies(["token", "refresh_token"]);
 	const {
 		register,
 		handleSubmit,
@@ -19,10 +24,35 @@ export default function LoginForm() {
 		formState: { errors },
 	} = useForm<FormFields>();
 
-	const onSubmit: SubmitHandler<FormFields> = (data) => {
-		console.log(data);
-		reset();
-		router.push("/");
+	const onSubmit: SubmitHandler<FormFields> = async (data) => {
+		try {
+			console.log(data);
+			const res = await axios.post(`${BASE_URL}/api/auth/login`, data);
+			console.log(res.data);
+			const token = res.data.token;
+			const refresh_token = res.data.refresh_token;
+			setCookies("token", token, {
+				path: "/",
+				maxAge: 60 * 60 * 24 * 7,
+				secure: true,
+				sameSite: "strict",
+			});
+
+			setCookies("refresh_token", refresh_token, {
+				path: "/",
+				maxAge: 60 * 60 * 24 * 15,
+				secure: true,
+				sameSite: "strict",
+			});
+			reset();
+			toast.success("ورود با موفقیت انجام شد.");
+			setTimeout(() => {
+				router.push("/");
+			}, 1500);
+		} catch (error) {
+			console.error(error);
+			toast.error("ایمیل یا رمز عبور اشتباه است.");
+		}
 	};
 
 	return (
@@ -56,7 +86,8 @@ export default function LoginForm() {
 								},
 							})}
 							type="email"
-							className="relative text-[14px] border border-gray-400 outline-none rounded-xl p-3 pr-9 pl-9"
+							dir="ltr"
+							className="relative text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3 pr-9 pl-9"
 							placeholder="ایمیل خود را وارد کنید"
 						/>
 						{errors.email && (
@@ -93,7 +124,8 @@ export default function LoginForm() {
 								},
 							})}
 							type={showPassword ? "text" : "password"}
-							className="text-[14px] border border-gray-400 outline-none rounded-xl p-3 pr-9 pl-9"
+							dir="ltr"
+							className="text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3 pr-9 pl-9"
 							placeholder="رمز عبور خود را وارد کنید"
 						/>
 						{errors.password && (
