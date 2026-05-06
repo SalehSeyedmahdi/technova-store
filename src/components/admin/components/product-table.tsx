@@ -74,10 +74,10 @@ export default function ProductTable() {
 							<tr key={product.id} className="text-[12px] md:text-[14px]">
 								<td className="p-2">
 									<div className="flex justify-center items-center gap-2">
-										<div className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md p-1">
+										<div className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md pr-1 pl-1 md:p-1">
 											<img src="../assets/svg/edit.svg" className="w-5 h-5" />
 										</div>
-										<div className="bg-red-500 cursor-pointer hover:opacity-60 rounded-md p-1">
+										<div className="bg-red-500 cursor-pointer hover:opacity-60 rounded-md pr-1 pl-1 md:p-1">
 											<img src="../assets/svg/trash.svg" className="w-5 h-5" />
 										</div>
 									</div>
