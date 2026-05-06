@@ -31,7 +31,7 @@ export default function RegisterForm() {
 			reset();
 			toast.success("ثبت‌نام با موفقیت انجام شد.");
 			setTimeout(() => {
-				router.push("/login");
+				router.replace("/login");
 			}, 1000);
 		} catch (error) {
 			console.error(error);

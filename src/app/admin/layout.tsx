@@ -1,3 +1,4 @@
+import CookieProvider from "@/components/providers/cookie-provider";
 import AdminFooter from "@/layout/admin-footer/admin-footer";
 import AdminHeader from "@/layout/admin-header/admin-header";
 import type { Metadata } from "next";
@@ -30,9 +31,11 @@ export default function RootLayout({
 			className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
 		>
 			<body className="min-h-full flex flex-col">
-				<AdminHeader />
-				{children}
-				<AdminFooter />
+				<CookieProvider>
+					<AdminHeader />
+					{children}
+					<AdminFooter />
+				</CookieProvider>
 			</body>
 		</html>
 	);
