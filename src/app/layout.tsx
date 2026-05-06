@@ -1,3 +1,4 @@
+import CookieProvider from "@/components/providers/cookie-provider";
 import ToastProvider from "@/components/providers/toast-provider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -42,8 +43,10 @@ export default function RootLayout({
 			className={`${geistSans.variable} ${geistMono.variable} ${yekanBakh.variable} h-full antialiased`}
 		>
 			<body className="min-h-full flex flex-col">
-				{children}
-				<ToastProvider />
+				<CookieProvider>
+					{children}
+					<ToastProvider />
+				</CookieProvider>
 			</body>
 		</html>
 	);

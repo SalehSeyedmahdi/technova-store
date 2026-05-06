@@ -16,7 +16,7 @@ type FormFields = {
 export default function LoginForm() {
 	const router = useRouter();
 	const [showPassword, setShowPassword] = useState(false);
-	const [cookies, setCookies] = useCookies(["token", "refresh_token"]);
+	const [cookies, setCookies] = useCookies(["token", "refresh_token", "role"]);
 	const {
 		register,
 		handleSubmit,
@@ -31,6 +31,7 @@ export default function LoginForm() {
 			console.log(res.data);
 			const token = res.data.token;
 			const refresh_token = res.data.refresh_token;
+			const role = res.data.data.user.role;
 			setCookies("token", token, {
 				path: "/",
 				maxAge: 60 * 60 * 24 * 7,
@@ -44,10 +45,17 @@ export default function LoginForm() {
 				secure: true,
 				sameSite: "strict",
 			});
+			setCookies("role", role, {
+				path: "/",
+			});
 			reset();
 			toast.success("ورود با موفقیت انجام شد.");
 			setTimeout(() => {
-				router.push("/");
+				if (role === "admin") {
+					router.replace("/admin");
+				} else {
+					router.replace("/");
+				}
 			}, 1000);
 		} catch (error) {
 			console.error(error);
