@@ -9,7 +9,7 @@ type Product = {
 	name: string;
 	brand: string;
 	price: number;
-	category: string;
+	stock: number;
 	images: string[];
 };
 
@@ -24,7 +24,7 @@ async function getProducts(): Promise<Product[]> {
 	}
 }
 
-export default function ProductTable() {
+export default function InventoryTable() {
 	const [products, setProducts] = useState<Product[]>([]);
 	const [page, setPage] = useState(1);
 	const [pages, setPages] = useState(1);
@@ -50,9 +50,6 @@ export default function ProductTable() {
 
 	return (
 		<div className="w-full flex flex-col justify-start items-center gap-2 pr-2 pl-2">
-			<button className="flex justify-center items-center text-[12px] md:text-[16px] text-[#ffffff] bg-green-950 cursor-pointer hover:opacity-60 rounded-md pr-3 pl-3 p-1">
-				افزودن محصول
-			</button>
 			{loading ? (
 				<div className="w-full h-80 flex items-center justify-center">
 					<div className="w-8 h-8 border-4 border-blue-200 rounded-full animate-spin border-t-blue-600"></div>
@@ -62,8 +59,8 @@ export default function ProductTable() {
 					<thead className="bg-[#193cb8] text-[12px] md:text-[16px] text-white">
 						<tr>
 							<td className="p-2">عملیات</td>
+							<td className="border-l p-2">موجودی</td>
 							<td className="border-l p-2">قیمت</td>
-							<td className="border-l p-2">دسته بندی</td>
 							<td className="border-l p-2">برند</td>
 							<td className="border-l p-2">نام محصول</td>
 							<td className="border-l p-2">تصویر</td>
@@ -73,23 +70,17 @@ export default function ProductTable() {
 						{products.map((product) => (
 							<tr key={product.id} className="text-[12px] md:text-[14px]">
 								<td className="p-2">
-									<div className="flex justify-center items-center gap-1 md:gap-2">
-										<div className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md pr-0.5 pl-0.5 md:p-1">
+									<div className="flex justify-center items-center gap-2">
+										<div className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md p-1">
 											<img
 												src="../assets/svg/edit.svg"
 												className="w-4 md:w-5 h-4 md:h-5"
 											/>
 										</div>
-										<div className="bg-red-500 cursor-pointer hover:opacity-60 rounded-md pr-0.5 pl-0.5 md:p-1">
-											<img
-												src="../assets/svg/trash.svg"
-												className="w-4 md:w-5 h-4 md:h-5"
-											/>
-										</div>
 									</div>
 								</td>
+								<td className="p-2">{product.stock}</td>
 								<td className="p-2">{product.price}</td>
-								<td className="p-2">{product.category}</td>
 								<td className="p-2">{product.brand}</td>
 								<td className="p-2">{product.name}</td>
 								<td className="p-2">

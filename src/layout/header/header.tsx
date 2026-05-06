@@ -22,12 +22,17 @@ export default function Header() {
 				<div className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer">
 					<img src="/assets/svg/cart.svg" className="w-[24px] h-[24px]" />
 				</div>
-				<div className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer">
-					<img
-						src="/assets/svg/user.svg"
-						className="w-[24px] h-[24px]"
-						onClick={() => router.push("/login")}
-					/>
+				<div
+					className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer"
+					onClick={() => {
+						if (cookies.role === "admin") {
+							router.push("/admin");
+						} else {
+							router.push("/dashboard");
+						}
+					}}
+				>
+					<img src="/assets/svg/user.svg" className="w-[24px] h-[24px]" />
 				</div>
 				<div className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer">
 					<img src="/assets/svg/search.svg" className="w-[24px] h-[24px]" />
