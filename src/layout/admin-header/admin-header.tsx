@@ -12,7 +12,7 @@ export default function AdminHeader() {
 					onClick={() => route.push("/login")}
 				/>
 			</div>
-			<h1 className="font-extrabold text-2xl text-blue-800">
+			<h1 className="font-extrabold text-xl md:text-2xl text-blue-800">
 				پنل مدیریت فروشگاه
 			</h1>
 			<div className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer">

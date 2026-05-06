@@ -1,6 +1,6 @@
 export default function AdminPage() {
 	return (
-		<div className="flex flex-col justify-center items-center mt-[86px]">
+		<div className="w-full h-screen flex justify-center items-center bg-gray-500">
 			AdminPage
 		</div>
 	);
