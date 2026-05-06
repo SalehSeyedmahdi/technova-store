@@ -21,12 +21,11 @@ export default function AdminHeader() {
 			<h1 className="font-extrabold text-xl md:text-2xl text-blue-800">
 				پنل مدیریت فروشگاه
 			</h1>
-			<div className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer">
-				<img
-					src="/assets/svg/home.svg"
-					className="w-[24px] h-[24px]"
-					onClick={() => router.push("/")}
-				/>
+			<div
+				className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer"
+				onClick={() => router.push("/")}
+			>
+				<img src="/assets/svg/home.svg" className="w-[24px] h-[24px]" />
 			</div>
 		</header>
 	);
