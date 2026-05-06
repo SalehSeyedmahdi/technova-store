@@ -32,7 +32,7 @@ export default function RegisterForm() {
 			toast.success("ثبت‌نام با موفقیت انجام شد.");
 			setTimeout(() => {
 				router.push("/login");
-			}, 1500);
+			}, 1000);
 		} catch (error) {
 			console.error(error);
 			toast.error("ایمیل وارد شده از قبل وجود دارد.");
