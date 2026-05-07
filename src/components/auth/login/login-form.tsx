@@ -28,9 +28,9 @@ export default function LoginForm() {
 		try {
 			console.log(data);
 			const res = await axios.post(`${BASE_URL}/api/auth/login`, data);
-			console.log(res.data);
-			const token = res.data.token;
-			const refresh_token = res.data.refresh_token;
+			console.log(res.data.data);
+			const token = res.data.data.token;
+			const refresh_token = res.data.data.refresh_token;
 			const role = res.data.data.user.role;
 			setCookies("token", token, {
 				path: "/",
