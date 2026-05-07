@@ -2,9 +2,11 @@
 
 import { BASE_URL } from "@/constants/BASE_URL";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type Product = {
+	_id: string;
 	id: string;
 	name: string;
 	brand: string;
@@ -13,18 +15,8 @@ type Product = {
 	images: string[];
 };
 
-async function getProducts(): Promise<Product[]> {
-	try {
-		const res = await axios.get(`${BASE_URL}/api/products?page=1&limit=6`);
-		console.log(res.data.data);
-		return res.data.data;
-	} catch (error) {
-		console.error("Failed to fetch products:", error);
-		return [];
-	}
-}
-
 export default function ProductTable() {
+	const router = useRouter();
 	const [products, setProducts] = useState<Product[]>([]);
 	const [page, setPage] = useState(1);
 	const [pages, setPages] = useState(1);
@@ -37,6 +29,7 @@ export default function ProductTable() {
 				const res = await axios.get(
 					`${BASE_URL}/api/products?page=${page}&limit=5`,
 				);
+
 				setProducts(res.data.data);
 				setPages(res.data.pages);
 			} catch (error) {
@@ -71,10 +64,15 @@ export default function ProductTable() {
 					</thead>
 					<tbody className="bg-[#ffffff]">
 						{products.map((product) => (
-							<tr key={product.id} className="text-[12px] md:text-[14px]">
+							<tr key={product._id} className="text-[12px] md:text-[14px]">
 								<td className="p-2">
 									<div className="flex justify-center items-center gap-1 md:gap-2">
-										<div className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md pr-0.5 pl-0.5 md:p-1">
+										<div
+											className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md pr-0.5 pl-0.5 md:p-1"
+											onClick={() =>
+												router.push(`/admin/products/${product._id}/edit`)
+											}
+										>
 											<img
 												src="../assets/svg/edit.svg"
 												className="w-4 md:w-5 h-4 md:h-5"
@@ -109,7 +107,7 @@ export default function ProductTable() {
 			<div className="flex gap-2">
 				<button
 					onClick={() => setPage((prev) => prev - 1)}
-					className="text-[12px] md:text-[16px] text-[#ffffff] bg-red-700 rounded-md cursor-pointer disabled:opacity-20 hover:opacity-70 p-1 pr-3 pl-3"
+					className="text-[12px] md:text-[16px] text-[#ffffff] bg-red-700 rounded-md cursor-pointer disabled:opacity-20 disabled:cursor-default hover:opacity-70 p-1 pr-3 pl-3"
 					disabled={page === 1}
 				>
 					قبلی
@@ -120,7 +118,7 @@ export default function ProductTable() {
 				>{`${pages} از ${page}`}</div>
 				<button
 					onClick={() => setPage((prev) => prev + 1)}
-					className="text-[12px] md:text-[16px] text-[#ffffff] bg-red-700 rounded-md cursor-pointer disabled:opacity-20 hover:opacity-70 p-1 pr-3 pl-3"
+					className="text-[12px] md:text-[16px] text-[#ffffff] bg-red-700 rounded-md cursor-pointer disabled:opacity-20 disabled:cursor-default hover:opacity-70 p-1 pr-3 pl-3"
 					disabled={page === pages}
 				>
 					بعدی
