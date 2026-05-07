@@ -21,7 +21,6 @@ type Product = {
 export default function ProductTable() {
 	const router = useRouter();
 	const [cookies] = useCookies(["token"]);
-
 	const [products, setProducts] = useState<Product[]>([]);
 	const [page, setPage] = useState(1);
 	const [pages, setPages] = useState(1);
