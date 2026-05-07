@@ -4,6 +4,9 @@ import { BASE_URL } from "@/constants/BASE_URL";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
+import { toast } from "react-toastify";
+import DeleteProductModal from "./delete-product-modal";
 
 type Product = {
 	_id: string;
@@ -17,15 +20,21 @@ type Product = {
 
 export default function ProductTable() {
 	const router = useRouter();
+	const [cookies] = useCookies(["token"]);
+
 	const [products, setProducts] = useState<Product[]>([]);
 	const [page, setPage] = useState(1);
 	const [pages, setPages] = useState(1);
 	const [loading, setLoading] = useState(false);
+	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+	const [deleting, setDeleting] = useState(false);
 
 	useEffect(() => {
 		async function getProducts() {
 			try {
 				setLoading(true);
+
 				const res = await axios.get(
 					`${BASE_URL}/api/products?page=${page}&limit=5`,
 				);
@@ -38,14 +47,49 @@ export default function ProductTable() {
 				setLoading(false);
 			}
 		}
+
 		getProducts();
 	}, [page]);
+
+	const openDeleteModal = (product: Product) => {
+		setSelectedProduct(product);
+		setIsDeleteModalOpen(true);
+	};
+
+	const handleDeleteProduct = async () => {
+		if (!selectedProduct) return;
+
+		try {
+			setDeleting(true);
+
+			await axios.delete(`${BASE_URL}/api/products/${selectedProduct._id}`, {
+				headers: {
+					Authorization: `Bearer ${cookies.token}`,
+				},
+			});
+
+			setProducts((prev) =>
+				prev.filter((product) => product._id !== selectedProduct._id),
+			);
+
+			toast.success("محصول با موفقیت حذف شد");
+
+			setIsDeleteModalOpen(false);
+			setSelectedProduct(null);
+		} catch (error) {
+			console.error(error);
+			toast.error("حذف محصول انجام نشد");
+		} finally {
+			setDeleting(false);
+		}
+	};
 
 	return (
 		<div className="w-full flex flex-col justify-start items-center gap-2 pr-2 pl-2">
 			<button className="flex justify-center items-center text-[12px] md:text-[16px] text-[#ffffff] bg-green-950 cursor-pointer hover:opacity-60 rounded-md pr-3 pl-3 p-1">
 				افزودن محصول
 			</button>
+
 			{loading ? (
 				<div className="w-full h-80 flex items-center justify-center">
 					<div className="w-8 h-8 border-4 border-blue-200 rounded-full animate-spin border-t-blue-600"></div>
@@ -62,6 +106,7 @@ export default function ProductTable() {
 							<td className="border-l p-2">تصویر</td>
 						</tr>
 					</thead>
+
 					<tbody className="bg-[#ffffff]">
 						{products.map((product) => (
 							<tr key={product._id} className="text-[12px] md:text-[14px]">
@@ -78,7 +123,11 @@ export default function ProductTable() {
 												className="w-4 md:w-5 h-4 md:h-5"
 											/>
 										</div>
-										<div className="bg-red-500 cursor-pointer hover:opacity-60 rounded-md pr-0.5 pl-0.5 md:p-1">
+
+										<div
+											className="bg-red-500 cursor-pointer hover:opacity-60 rounded-md pr-0.5 pl-0.5 md:p-1"
+											onClick={() => openDeleteModal(product)}
+										>
 											<img
 												src="../assets/svg/trash.svg"
 												className="w-4 md:w-5 h-4 md:h-5"
@@ -86,10 +135,12 @@ export default function ProductTable() {
 										</div>
 									</div>
 								</td>
+
 								<td className="p-2">{product.price}</td>
 								<td className="p-2">{product.category}</td>
 								<td className="p-2">{product.brand}</td>
 								<td className="p-2">{product.name}</td>
+
 								<td className="p-2">
 									<div className="flex justify-center items-center">
 										<img
@@ -112,10 +163,14 @@ export default function ProductTable() {
 				>
 					قبلی
 				</button>
+
 				<div
 					dir="rtl"
 					className="flex justify-center items-center border rounded-md p-1 pr-3 pl-3"
-				>{`${pages} از ${page}`}</div>
+				>
+					{`${pages} از ${page}`}
+				</div>
+
 				<button
 					onClick={() => setPage((prev) => prev + 1)}
 					className="text-[12px] md:text-[16px] text-[#ffffff] bg-red-700 rounded-md cursor-pointer disabled:opacity-20 disabled:cursor-default hover:opacity-70 p-1 pr-3 pl-3"
@@ -124,6 +179,18 @@ export default function ProductTable() {
 					بعدی
 				</button>
 			</div>
+
+			{isDeleteModalOpen && selectedProduct && (
+				<DeleteProductModal
+					productName={selectedProduct.name}
+					deleting={deleting}
+					onClose={() => {
+						setIsDeleteModalOpen(false);
+						setSelectedProduct(null);
+					}}
+					onConfirm={handleDeleteProduct}
+				/>
+			)}
 		</div>
 	);
 }
