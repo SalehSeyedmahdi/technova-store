@@ -3,8 +3,12 @@
 import { BASE_URL } from "@/constants/BASE_URL";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
+import { toast } from "react-toastify";
+import ChangeInventoryModal from "./change-inventory-modal";
 
 type Product = {
+	_id: string;
 	id: string;
 	name: string;
 	brand: string;
@@ -13,22 +17,16 @@ type Product = {
 	images: string[];
 };
 
-async function getProducts(): Promise<Product[]> {
-	try {
-		const res = await axios.get(`${BASE_URL}/api/products?page=1&limit=6`);
-		console.log(res.data.data);
-		return res.data.data;
-	} catch (error) {
-		console.error("Failed to fetch products:", error);
-		return [];
-	}
-}
-
 export default function InventoryTable() {
 	const [products, setProducts] = useState<Product[]>([]);
+	const [cookies] = useCookies(["token"]);
 	const [page, setPage] = useState(1);
 	const [pages, setPages] = useState(1);
 	const [loading, setLoading] = useState(false);
+	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+	const [changeInventoryModalOpen, setChangeInventoryModalOpen] =
+		useState(false);
+	const [changeInventory, setChangeInventory] = useState(false);
 
 	useEffect(() => {
 		async function getProducts() {
@@ -45,8 +43,52 @@ export default function InventoryTable() {
 				setLoading(false);
 			}
 		}
+
 		getProducts();
 	}, [page]);
+
+	const openChangeInventoryModal = (product: Product) => {
+		setSelectedProduct(product);
+		setChangeInventoryModalOpen(true);
+	};
+
+	const handleChangeInventory = async (newStock: number) => {
+		if (!selectedProduct) return;
+
+		try {
+			setChangeInventory(true);
+
+			await axios.put(
+				`${BASE_URL}/api/products/${selectedProduct._id}`,
+				{
+					stock: newStock,
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${cookies.token}`,
+					},
+				},
+			);
+
+			setProducts((prev) =>
+				prev.map((product) =>
+					product._id === selectedProduct._id
+						? { ...product, stock: newStock }
+						: product,
+				),
+			);
+
+			toast.success("موجودی محصول با موفقیت ویرایش شد");
+
+			setChangeInventoryModalOpen(false);
+			setSelectedProduct(null);
+		} catch (error) {
+			console.error(error);
+			toast.error("ویرایش موجودی محصول با خطا مواجه شد");
+		} finally {
+			setChangeInventory(false);
+		}
+	};
 
 	return (
 		<div className="w-full flex flex-col justify-start items-center gap-2 pr-2 pl-2">
@@ -66,17 +108,22 @@ export default function InventoryTable() {
 							<td className="border-l p-2">تصویر</td>
 						</tr>
 					</thead>
+
 					<tbody className="bg-[#ffffff]">
 						{products.map((product) => (
-							<tr key={product.id} className="text-[12px] md:text-[14px]">
+							<tr key={product._id} className="text-[12px] md:text-[14px]">
 								<td className="p-2">
 									<div className="flex justify-center items-center gap-2">
-										<div className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md p-1">
+										<button
+											type="button"
+											onClick={() => openChangeInventoryModal(product)}
+											className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md p-1"
+										>
 											<img
 												src="../assets/svg/edit.svg"
 												className="w-4 md:w-5 h-4 md:h-5"
 											/>
-										</div>
+										</button>
 									</div>
 								</td>
 								<td className="p-2">{product.stock}</td>
@@ -105,10 +152,14 @@ export default function InventoryTable() {
 				>
 					قبلی
 				</button>
+
 				<div
 					dir="rtl"
 					className="flex justify-center items-center border rounded-md p-1 pr-3 pl-3"
-				>{`${pages} از ${page}`}</div>
+				>
+					{`${pages} از ${page}`}
+				</div>
+
 				<button
 					onClick={() => setPage((prev) => prev + 1)}
 					className="text-[12px] md:text-[16px] text-[#ffffff] bg-red-700 rounded-md cursor-pointer disabled:opacity-20 hover:opacity-70 p-1 pr-3 pl-3"
@@ -117,6 +168,19 @@ export default function InventoryTable() {
 					بعدی
 				</button>
 			</div>
+
+			{changeInventoryModalOpen && selectedProduct && (
+				<ChangeInventoryModal
+					productName={selectedProduct.name}
+					stock={selectedProduct.stock}
+					updating={changeInventory}
+					onClose={() => {
+						setChangeInventoryModalOpen(false);
+						setSelectedProduct(null);
+					}}
+					onConfirm={handleChangeInventory}
+				/>
+			)}
 		</div>
 	);
 }
