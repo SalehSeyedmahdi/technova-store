@@ -85,7 +85,10 @@ export default function ProductTable() {
 
 	return (
 		<div className="w-full flex flex-col justify-start items-center gap-2 pr-2 pl-2">
-			<button className="flex justify-center items-center text-[12px] md:text-[16px] text-[#ffffff] bg-green-950 cursor-pointer hover:opacity-60 rounded-md pr-3 pl-3 p-1">
+			<button
+				className="flex justify-center items-center text-[12px] md:text-[16px] text-[#ffffff] bg-green-950 cursor-pointer hover:opacity-60 rounded-md pr-3 pl-3 p-1"
+				onClick={() => router.push("/admin/products/add-product")}
+			>
 				افزودن محصول
 			</button>
 
