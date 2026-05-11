@@ -1,72 +1,126 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useCookies } from "react-cookie";
+import MenuModal from "./menu-modal";
 
 export default function Header() {
 	const router = useRouter();
 	const [cookies] = useCookies(["role"]);
+	const [isMenuModalOpen, setIsMenuModalOpen] = useState(false);
+
 	return (
-		<header className="w-full fixed top-0 flex justify-between items-center font-[yekanBakh] text-[20px] bg-[#ffffff] shadow-sm p-[2px] pl-[14px] pr-[14px]">
-			<img
-				src="/assets/svg/user.svg"
-				className="w-[23px] h-[23px] cursor-pointer md:hidden"
-				onClick={() => {
-					if (cookies.role === "admin") {
-						router.push("/admin");
-					} else {
-						router.push("/dashboard");
-					}
-				}}
-			/>
-			<div className="hidden md:flex md:justify-center md:items-center md:gap-[16px]">
-				<div className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer">
-					<img src="/assets/svg/cart.svg" className="w-[24px] h-[24px]" />
-				</div>
-				<div
-					className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer"
+		<header className="w-full fixed top-0 flex flex-col justify-center items-end gap-[12px] font-[yekanBakh] text-[20px] bg-[#ffffff] shadow-sm p-[2px] pl-[14px] pr-[14px]">
+			<div className="w-full flex justify-between items-center">
+				<img
+					src="/assets/svg/user.svg"
+					className="w-[22px] h-[22px] cursor-pointer md:hidden"
 					onClick={() => {
-						if (cookies.role === "admin") {
+						if (!cookies.role) {
+							router.push("/login");
+						} else if (cookies.role === "admin") {
 							router.push("/admin");
 						} else {
 							router.push("/dashboard");
 						}
 					}}
-				>
-					<img src="/assets/svg/user.svg" className="w-[24px] h-[24px]" />
+				/>
+				<div className="hidden md:flex md:justify-center md:items-center md:gap-[12px]">
+					<div
+						className="p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer"
+						onClick={() => router.push("/cart")}
+					>
+						<img src="/assets/svg/cart.svg" className="w-[22px] h-[22px]" />
+					</div>
+					<div
+						className="p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer"
+						onClick={() => {
+							if (cookies.role === "admin") {
+								router.push("/admin");
+							} else {
+								router.push("/dashboard");
+							}
+						}}
+					>
+						<img src="/assets/svg/user.svg" className="w-[22px] h-[22px]" />
+					</div>
 				</div>
-				<div className="w-[40px] h-[40px] p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer">
-					<img src="/assets/svg/search.svg" className="w-[24px] h-[24px]" />
+				<div className="hidden md:flex md:justify-center md:items-center md:gap-5">
+					<label className="relative">
+						<img
+							src="/assets/svg/search.svg"
+							className="w-[18px] h-[18px] absolute right-5 top-3"
+						/>
+						<input
+							dir="rtl"
+							type="text"
+							placeholder="جستجو"
+							className="w-100 text-[#a1a3a8] text-[14px] bg-[#f0f0f1] outline-none rounded-3xl p-3 pr-[50px]"
+						/>
+					</label>
+					<img
+						src="/assets/images/logo.png"
+						alt="لوگو"
+						className="w-[150px] h-[75px] cursor-pointer"
+						onClick={() => router.push("/")}
+					/>
 				</div>
-			</div>
-			<ol className="hidden md:flex md:justify-center md:items-center md:gap-4 lg:gap-10 md:text-gray-600">
-				<li className="cursor-pointer hover:text-blue-700 hover:border-b-2 hover:rounded-sm">
-					ساعت هوشمند
-				</li>
-				<li className="cursor-pointer hover:text-blue-700 hover:border-b-2 hover:rounded-sm">
-					موبایل
-				</li>
-				<li className="cursor-pointer hover:text-blue-700 hover:border-b-2 hover:rounded-sm">
-					تبلت
-				</li>
-				<li className="cursor-pointer hover:text-blue-700 hover:border-b-2 hover:rounded-sm">
-					لپ تاپ
-				</li>
-			</ol>
-			<div className="hidden md:flex md:justify-center md:items-center md:gap-5">
 				<img
 					src="/assets/images/logo.png"
 					alt="لوگو"
-					className="w-[140px] h-[70px] cursor-pointer"
+					className="w-[120px] h-[60px] cursor-pointer md:hidden"
 					onClick={() => router.push("/")}
 				/>
+				<img
+					src="/assets/svg/menu.svg"
+					className="w-[22px] h-[22px] cursor-pointer md:hidden"
+					onClick={() => setIsMenuModalOpen(true)}
+				/>
 			</div>
-			<img
-				src="/assets/images/logo.png"
-				alt="لوگو"
-				className="w-[110px] h-[55px] md:hidden"
-				onClick={() => router.push("/")}
-			/>
-			<img src="/assets/svg/menu.svg" className="w-[24px] h-[24px] md:hidden" />
+			<ol className="hidden md:flex md:justify-center md:items-center md:gap-4 lg:gap-[24px] md:text-[14px] md:text-gray-500 md:pr-5 pb-2">
+				<div
+					className="flex justify-center items-center gap-1 cursor-pointer hover:text-blue-700"
+					onClick={() => router.push("/contact-us")}
+				>
+					<li>تماس با ما</li>
+					<img src="/assets/svg/phone.svg" className="w-4 h-4" />
+				</div>
+				<div
+					className="flex justify-center items-center gap-1 cursor-pointer hover:text-blue-700"
+					onClick={() => router.push("/about-us")}
+				>
+					<li>درباره ما</li>
+					<img src="/assets/svg/info.svg" className="w-4 h-4" />
+				</div>
+				<div
+					className="flex justify-center items-center gap-1 cursor-pointer hover:text-blue-700"
+					onClick={() => router.push("/products")}
+				>
+					<li>لپ تاپ</li>
+					<img src="/assets/svg/laptop.svg" className="w-4 h-4" />
+				</div>
+				<div
+					className="flex justify-center items-center gap-1 cursor-pointer hover:text-blue-700"
+					onClick={() => router.push("/products")}
+				>
+					<li>موبایل</li>
+					<img src="/assets/svg/mobile.svg" className="w-4 h-4" />
+				</div>
+				<div
+					className="flex justify-center items-center gap-1 cursor-pointer hover:text-blue-700"
+					onClick={() => router.push("/products")}
+				>
+					<li>محصولات</li>
+					<img src="/assets/svg/products.svg" className="w-4 h-4" />
+				</div>
+			</ol>
+			{isMenuModalOpen && (
+				<MenuModal
+					onClose={() => {
+						setIsMenuModalOpen(false);
+					}}
+				/>
+			)}
 		</header>
 	);
 }
