@@ -13,7 +13,7 @@ export function middleware(request: NextRequest) {
 	const refresh = request.cookies.get("refresh_token")?.value;
 	const role = request.cookies.get("role")?.value;
 
-	const isLoggedIn = Boolean(token || refresh);
+	const isLoggedIn = Boolean(token && refresh && role);
 
 	if (pathname.startsWith("/admin")) {
 		if (!isLoggedIn) {
@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
 		}
 
 		if (role !== "admin") {
-			return NextResponse.redirect(new URL("/", request.url));
+			return NextResponse.redirect(new URL("/dashboard", request.url));
 		}
 	}
 
