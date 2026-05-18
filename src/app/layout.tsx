@@ -40,6 +40,7 @@ export default function RootLayout({
 	return (
 		<html
 			lang="fa"
+			suppressHydrationWarning
 			className={`${geistSans.variable} ${geistMono.variable} ${yekanBakh.variable} h-full antialiased`}
 		>
 			<body className="min-h-full flex flex-col">

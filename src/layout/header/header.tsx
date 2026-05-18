@@ -35,7 +35,9 @@ export default function Header() {
 					<div
 						className="p-[8px] bg-[#f0f0f0] hover:opacity-60 rounded-lg cursor-pointer"
 						onClick={() => {
-							if (cookies.role === "admin") {
+							if (!cookies.role) {
+								router.push("/login");
+							} else if (cookies.role === "admin") {
 								router.push("/admin");
 							} else {
 								router.push("/dashboard");

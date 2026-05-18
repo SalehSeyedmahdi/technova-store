@@ -138,7 +138,9 @@ export default function ProductTable() {
 									</div>
 								</td>
 
-								<td className="p-2">{product.price}</td>
+								<td className="p-2">
+									{product.price?.toLocaleString("fa-IR")}
+								</td>
 								<td className="p-2">{product.category}</td>
 								<td className="p-2">{product.brand}</td>
 								<td className="p-2">{product.name}</td>
