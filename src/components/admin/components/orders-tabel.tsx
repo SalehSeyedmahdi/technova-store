@@ -5,37 +5,49 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
-import ChangeInventoryModal from "./change-inventory-modal";
-
-type Product = {
-	_id: string;
-	id: string;
-	name: string;
-	brand: string;
-	price: number;
-	stock: number;
-	images: string[];
-};
+import { Order } from "../types/Order";
+import { OrderStatus } from "../types/OrderStatus";
+import ChangeOrderStatusModal from "./order-status-modal";
 
 export default function OrdersTable() {
-	const [products, setProducts] = useState<Product[]>([]);
+	const statusLabels = {
+		pending: "در انتظار تایید",
+		confirmed: "تایید شده",
+		shipping: "در حال ارسال",
+		delivered: "تحویل داده شده",
+		cancelled: "لغو شده",
+	};
+	const statusStyles = {
+		pending: "text-[#ffffff] bg-yellow-400",
+		confirmed: "text-[#ffffff] bg-blue-400",
+		shipping: "text-[#ffffff] bg-purple-400",
+		delivered: "text-[#ffffff] bg-green-400",
+		cancelled: "text-[#ffffff] bg-red-400",
+	};
+	const [orders, setOrders] = useState<Order[]>([]);
 	const [cookies] = useCookies(["token"]);
 	const [page, setPage] = useState(1);
 	const [pages, setPages] = useState(1);
 	const [loading, setLoading] = useState(false);
-	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-	const [changeInventoryModalOpen, setChangeInventoryModalOpen] =
-		useState(false);
-	const [changeInventory, setChangeInventory] = useState(false);
+	const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+	const [changeStatusModalOpen, setChangeStatusModalOpen] = useState(false);
+	const [changeStatus, setChangeStatus] = useState(false);
 
 	useEffect(() => {
-		async function getProducts() {
+		async function getOrders() {
 			try {
 				setLoading(true);
 				const res = await axios.get(
-					`${BASE_URL}/api/products?page=${page}&limit=5`,
+					`${BASE_URL}/api/orders/admin/all?page=${page}&limit=5`,
+					{
+						headers: {
+							Authorization: `Bearer ${cookies.token}`,
+						},
+					},
 				);
-				setProducts(res.data.data);
+				console.log(res.data);
+
+				setOrders(res.data.data);
 				setPages(res.data.pages);
 			} catch (error) {
 				console.error(error);
@@ -44,24 +56,24 @@ export default function OrdersTable() {
 			}
 		}
 
-		getProducts();
+		getOrders();
 	}, [page]);
 
-	const openChangeInventoryModal = (product: Product) => {
-		setSelectedProduct(product);
-		setChangeInventoryModalOpen(true);
+	const openChangeStatusModal = (order: Order) => {
+		setSelectedOrder(order);
+		setChangeStatusModalOpen(true);
 	};
 
-	const handleChangeInventory = async (newStock: number) => {
-		if (!selectedProduct) return;
+	const handleChangeStatus = async (newStatus: OrderStatus) => {
+		if (!selectedOrder) return;
 
 		try {
-			setChangeInventory(true);
+			setChangeStatus(true);
 
 			await axios.put(
-				`${BASE_URL}/api/products/${selectedProduct._id}`,
+				`${BASE_URL}/api/orders/${selectedOrder._id}`,
 				{
-					stock: newStock,
+					status: newStatus,
 				},
 				{
 					headers: {
@@ -70,23 +82,23 @@ export default function OrdersTable() {
 				},
 			);
 
-			setProducts((prev) =>
-				prev.map((product) =>
-					product._id === selectedProduct._id
-						? { ...product, stock: newStock }
-						: product,
+			setOrders((prev) =>
+				prev.map((order) =>
+					order._id === selectedOrder._id
+						? { ...order, status: newStatus }
+						: order,
 				),
 			);
 
-			toast.success("موجودی محصول با موفقیت ویرایش شد");
+			toast.success("وضعیت سفارش با موفقیت تغییر کرد");
 
-			setChangeInventoryModalOpen(false);
-			setSelectedProduct(null);
+			setChangeStatusModalOpen(false);
+			setSelectedOrder(null);
 		} catch (error) {
 			console.error(error);
-			toast.error("ویرایش موجودی محصول با خطا مواجه شد");
+			toast.error("تغییر وضعیت سفارش انجام نشد.");
 		} finally {
-			setChangeInventory(false);
+			setChangeStatus(false);
 		}
 	};
 
@@ -100,7 +112,8 @@ export default function OrdersTable() {
 				<table className="w-full border-collapse text-center">
 					<thead className="bg-[#193cb8] text-[12px] md:text-[16px] text-white">
 						<tr>
-							<td className="p-2">وضعیت سفارش</td>
+							<td className="p-2">عملیات</td>
+							<td className="border-l p-2">وضعیت سفارش</td>
 							<td className="border-l p-2">زمان ثبت سفارش</td>
 							<td className="border-l p-2">مجموع مبلغ (تومان)</td>
 							<td className="border-l p-2">نام کاربر</td>
@@ -108,14 +121,14 @@ export default function OrdersTable() {
 					</thead>
 
 					<tbody className="bg-[#ffffff]">
-						{products.map((product) => (
-							<tr key={product._id} className="text-[12px] md:text-[14px]">
+						{orders.map((order) => (
+							<tr key={order._id} className="text-[12px] md:text-[14px]">
 								<td className="p-2">
 									<div className="flex justify-center items-center gap-2">
 										<button
 											type="button"
-											onClick={() => openChangeInventoryModal(product)}
-											className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md p-1"
+											onClick={() => openChangeStatusModal(order)}
+											className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md p-0.5 md:p-1"
 										>
 											<img
 												src="../assets/svg/edit.svg"
@@ -124,9 +137,24 @@ export default function OrdersTable() {
 										</button>
 									</div>
 								</td>
-								<td className="p-2">{product.stock}</td>
-								<td className="p-2">{product.price}</td>
-								<td className="p-2">{product.brand}</td>
+								<td className="p-2">
+									<span
+										className={`px-1 py-0.5 md:px-2 md:py-1 rounded-md text-[6px] md:text-[12px] ${statusStyles[order.status]}`}
+									>
+										{statusLabels[order.status] || order.status}
+									</span>
+								</td>
+								<td className="p-2">
+									{order.createdAt
+										? new Date(order.createdAt).toLocaleDateString("fa-IR")
+										: order.time || "-"}
+								</td>
+								<td className="p-2">
+									{order.totalPrice?.toLocaleString("fa-IR")}
+								</td>
+								<td className="p-2">
+									{order.shippingAddress?.fullName || order.fullName || "-"}
+								</td>
 							</tr>
 						))}
 					</tbody>
@@ -158,16 +186,20 @@ export default function OrdersTable() {
 				</button>
 			</div>
 
-			{changeInventoryModalOpen && selectedProduct && (
-				<ChangeInventoryModal
-					productName={selectedProduct.name}
-					stock={selectedProduct.stock}
-					updating={changeInventory}
+			{changeStatusModalOpen && selectedOrder && (
+				<ChangeOrderStatusModal
+					fullName={
+						selectedOrder.shippingAddress?.fullName ||
+						selectedOrder.fullName ||
+						"-"
+					}
+					status={selectedOrder.status}
+					updating={changeStatus}
 					onClose={() => {
-						setChangeInventoryModalOpen(false);
-						setSelectedProduct(null);
+						setChangeStatusModalOpen(false);
+						setSelectedOrder(null);
 					}}
-					onConfirm={handleChangeInventory}
+					onConfirm={handleChangeStatus}
 				/>
 			)}
 		</div>

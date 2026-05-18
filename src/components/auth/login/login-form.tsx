@@ -7,11 +7,7 @@ import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-
-type FormFields = {
-	email: string;
-	password: string;
-};
+import { LoginFormFields } from "../types/LoginFormFields";
 
 export default function LoginForm() {
 	const router = useRouter();
@@ -22,9 +18,9 @@ export default function LoginForm() {
 		handleSubmit,
 		reset,
 		formState: { errors },
-	} = useForm<FormFields>();
+	} = useForm<LoginFormFields>();
 
-	const onSubmit: SubmitHandler<FormFields> = async (data) => {
+	const onSubmit: SubmitHandler<LoginFormFields> = async (data) => {
 		try {
 			console.log(data);
 			const res = await axios.post(`${BASE_URL}/api/auth/login`, data);

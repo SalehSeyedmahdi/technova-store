@@ -1,11 +1,6 @@
 "use client";
 
-type DeleteProductModalProps = {
-	productName: string;
-	deleting: boolean;
-	onClose: () => void;
-	onConfirm: () => void;
-};
+import { DeleteProductModalProps } from "../types/DeleteProductModalProps";
 
 export default function DeleteProductModal({
 	productName,

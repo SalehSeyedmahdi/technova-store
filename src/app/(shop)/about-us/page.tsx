@@ -1,7 +1,7 @@
-export default function CartPage() {
+export default function AboutUsPage() {
 	return (
 		<div className="w-full h-screen flex justify-center items-center bg-[#eaebfc]">
-			CartPage
+			AboutUsPage
 		</div>
 	);
 }

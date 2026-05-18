@@ -13,15 +13,11 @@ export function middleware(request: NextRequest) {
 	const refresh = request.cookies.get("refresh_token")?.value;
 	const role = request.cookies.get("role")?.value;
 
-	const isLoggedIn = Boolean(token || refresh);
+	const isLoggedIn = Boolean(token && refresh && role);
 
 	if (pathname.startsWith("/admin")) {
-		if (!isLoggedIn) {
-			return NextResponse.redirect(new URL("/login", request.url));
-		}
-
-		if (role !== "admin") {
-			return NextResponse.redirect(new URL("/", request.url));
+		if (!isLoggedIn || role !== "admin") {
+			return NextResponse.rewrite(new URL("/not-found", request.url));
 		}
 	}
 

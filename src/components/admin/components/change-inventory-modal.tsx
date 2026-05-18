@@ -1,14 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-type ProductModalProps = {
-	productName: string;
-	stock: number;
-	updating: boolean;
-	onClose: () => void;
-	onConfirm: (newStock: number) => void;
-};
+import { ProductModalProps } from "../types/ProductModalProps";
 
 export default function ChangeInventoryModal({
 	productName,
@@ -35,7 +28,7 @@ export default function ChangeInventoryModal({
 					ویرایش موجودی محصول
 				</h2>
 
-				<p className="mb-4 text-sm text-gray-600 text-center">
+				<p className="mb-4 text-sm text-gray-600 text-center" dir="rtl">
 					موجودی محصول را ویرایش کنید.
 				</p>
 
