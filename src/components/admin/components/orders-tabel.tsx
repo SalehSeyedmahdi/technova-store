@@ -5,26 +5,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
+import { Order } from "../types/Order";
+import { OrderStatus } from "../types/OrderStatus";
 import ChangeOrderStatusModal from "./order-status-modal";
-
-type OrderStatus =
-	| "pending"
-	| "confirmed"
-	| "shipping"
-	| "delivered"
-	| "cancelled";
-
-type Order = {
-	_id: string;
-	shippingAddress?: {
-		fullName?: string;
-	};
-	fullName?: string;
-	totalPrice: number;
-	createdAt?: string;
-	time?: string;
-	status: OrderStatus;
-};
 
 export default function OrdersTable() {
 	const statusLabels = {

@@ -5,17 +5,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
+import { Product } from "../types/Product";
 import ChangeInventoryModal from "./change-inventory-modal";
-
-type Product = {
-	_id: string;
-	id: string;
-	name: string;
-	brand: string;
-	price: number;
-	stock: number;
-	images: string[];
-};
 
 export default function InventoryTable() {
 	const [products, setProducts] = useState<Product[]>([]);

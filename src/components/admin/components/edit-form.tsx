@@ -7,18 +7,8 @@ import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-
-type FormFields = {
-	name: string;
-	brand: string;
-	price: number;
-	category: string;
-	images: string[];
-};
-
-type EditFormProps = {
-	id: string;
-};
+import { EditFormProps } from "../types/EditFormProps";
+import { FormFields } from "../types/FormFields";
 
 export default function EditForm({ id }: EditFormProps) {
 	const router = useRouter();

@@ -6,17 +6,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
+import { Product } from "../types/Product";
 import DeleteProductModal from "./delete-product-modal";
-
-type Product = {
-	_id: string;
-	id: string;
-	name: string;
-	brand: string;
-	price: number;
-	category: string;
-	images: string[];
-};
 
 export default function ProductTable() {
 	const router = useRouter();

@@ -1,21 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-type OrderStatus =
-	| "pending"
-	| "confirmed"
-	| "shipping"
-	| "delivered"
-	| "cancelled";
-
-type OrderStatusModalProps = {
-	fullName: string;
-	status: OrderStatus;
-	updating: boolean;
-	onClose: () => void;
-	onConfirm: (newStatus: OrderStatus) => void;
-};
+import { OrderStatus } from "../types/OrderStatus";
+import { OrderStatusModalProps } from "../types/OrderStatusModalProps";
 
 export default function ChangeOrderStatusModal({
 	fullName,

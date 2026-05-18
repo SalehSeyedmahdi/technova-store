@@ -1,14 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-type ProductModalProps = {
-	productName: string;
-	stock: number;
-	updating: boolean;
-	onClose: () => void;
-	onConfirm: (newStock: number) => void;
-};
+import { ProductModalProps } from "../types/ProductModalProps";
 
 export default function ChangeInventoryModal({
 	productName,
