@@ -117,7 +117,7 @@ export default function InventoryTable() {
 										<button
 											type="button"
 											onClick={() => openChangeInventoryModal(product)}
-											className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md p-1"
+											className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md p-0.5 md:p-1"
 										>
 											<img
 												src="../assets/svg/edit.svg"
@@ -126,8 +126,12 @@ export default function InventoryTable() {
 										</button>
 									</div>
 								</td>
-								<td className="p-2">{product.stock}</td>
-								<td className="p-2">{product.price}</td>
+								<td className="p-2">
+									{product.stock?.toLocaleString("fa-IR")}
+								</td>
+								<td className="p-2">
+									{product.price?.toLocaleString("fa-IR")}
+								</td>
 								<td className="p-2">{product.brand}</td>
 								<td className="p-2">{product.name}</td>
 								<td className="p-2">

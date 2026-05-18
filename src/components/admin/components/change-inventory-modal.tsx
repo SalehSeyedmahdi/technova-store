@@ -35,7 +35,7 @@ export default function ChangeInventoryModal({
 					ویرایش موجودی محصول
 				</h2>
 
-				<p className="mb-4 text-sm text-gray-600 text-center">
+				<p className="mb-4 text-sm text-gray-600 text-center" dir="rtl">
 					موجودی محصول را ویرایش کنید.
 				</p>
 

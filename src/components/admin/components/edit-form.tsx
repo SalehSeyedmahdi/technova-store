@@ -12,6 +12,7 @@ type FormFields = {
 	name: string;
 	brand: string;
 	price: number;
+	category: string;
 	images: string[];
 };
 
@@ -41,6 +42,7 @@ export default function EditForm({ id }: EditFormProps) {
 					name: product.name,
 					brand: product.brand,
 					price: product.price,
+					category: product.category,
 					images: product.images || [],
 				});
 			} catch (error) {
@@ -86,18 +88,19 @@ export default function EditForm({ id }: EditFormProps) {
 
 	return (
 		<form
-			className="flex flex-col justify-between items-center gap-10 bg-[#ffffff] rounded-2xl p-8"
+			className="h-130 md:h-auto flex flex-col justify-between items-center gap-6 overflow-y-auto bg-[#ffffff] rounded-2xl p-8"
 			onSubmit={handleSubmit(onSubmit)}
 		>
 			<h1 className="font-bold text-[20px]">ویرایش محصول</h1>
-			<div className="grid grid-cols-1 gap-6" dir="rtl">
+			<div className="grid grid-cols-1 gap-4 md:grid-cols-2" dir="rtl">
 				<label className="relative">
+					<label>نام محصول</label>
 					<input
 						{...register("name", { required: "نام محصول الزامی است" })}
 						type="text"
-						placeholder="نام محصول"
+						placeholder="نام محصول را وارد کنید"
 						dir="rtl"
-						className="text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3"
+						className="w-full text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3"
 					/>
 					{errors.name && (
 						<p className="absolute right-2 text-[12px] text-red-600">
@@ -106,12 +109,13 @@ export default function EditForm({ id }: EditFormProps) {
 					)}
 				</label>
 				<label className="relative">
+					<label>برند</label>
 					<input
 						{...register("brand", { required: "برند الزامی است" })}
 						type="text"
-						placeholder="برند"
+						placeholder="برند را وارد کنید"
 						dir="rtl"
-						className="text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3"
+						className="w-full text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3"
 					/>
 					{errors.brand && (
 						<p className="absolute right-2 text-[12px] text-red-600">
@@ -120,12 +124,13 @@ export default function EditForm({ id }: EditFormProps) {
 					)}
 				</label>
 				<label className="relative">
+					<label>قیمت</label>
 					<input
 						{...register("price", { required: "قیمت الزامی است" })}
 						type="text"
-						placeholder="قیمت"
+						placeholder="قیمت را وارد کنید"
 						dir="rtl"
-						className="text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3"
+						className="w-full text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3"
 					/>
 					{errors.price && (
 						<p className="absolute right-2 text-[12px] text-red-600">
@@ -134,12 +139,35 @@ export default function EditForm({ id }: EditFormProps) {
 					)}
 				</label>
 				<label className="relative">
+					<label>دسته بندی</label>
+					<select
+						{...register("category", {
+							required: "دسته بندی الزامی است",
+							validate: (value) => value !== "" || "دسته بندی الزامی است",
+						})}
+						defaultValue=""
+						className="w-full text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3"
+					>
+						<option value="" disabled>
+							دسته بندی را انتخاب کنید
+						</option>
+						<option value="smartphone">Smartphone</option>
+						<option value="laptop">Laptop</option>
+					</select>
+					{errors.category && (
+						<p className="absolute right-2 text-[12px] text-red-600">
+							{errors.category.message}
+						</p>
+					)}
+				</label>
+				<label className="relative md:col-span-2">
+					<label>لینک تصویر</label>
 					<input
 						{...register("images", { required: "لینک تصویر الزامی است" })}
 						type="text"
-						placeholder="لینک تصویر"
+						placeholder="لینک تصویر را وارد کنید"
 						dir="rtl"
-						className="text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3"
+						className="w-full text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3"
 					/>
 					{errors.images && (
 						<p className="absolute right-2 text-[12px] text-red-600">
@@ -148,7 +176,7 @@ export default function EditForm({ id }: EditFormProps) {
 					)}
 				</label>
 			</div>
-			<button className="flex justify-center items-center font-bold text-[#ffffff] bg-blue-800 hover:opacity-60 cursor-pointer rounded-xl p-3 pr-17 pl-17">
+			<button className="w-full flex justify-center items-center font-bold text-[#ffffff] bg-blue-800 hover:opacity-60 cursor-pointer rounded-xl p-3">
 				ویرایش
 			</button>
 		</form>
