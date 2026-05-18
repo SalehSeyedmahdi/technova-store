@@ -6,16 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCookies } from "react-cookie";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-
-type FormFields = {
-	name: string;
-	brand: string;
-	price: number;
-	category: string;
-	stock: number;
-	description: string;
-	images: FileList;
-};
+import { FormFields } from "../types/FormFields";
 
 export default function AddForm() {
 	const router = useRouter();

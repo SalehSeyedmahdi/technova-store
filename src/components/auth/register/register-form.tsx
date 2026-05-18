@@ -6,12 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-
-type FormFields = {
-	name: string;
-	email: string;
-	password: string;
-};
+import { RegisterFormFields } from "../types/RegisterFormFields";
 
 export default function RegisterForm() {
 	const router = useRouter();
@@ -21,9 +16,9 @@ export default function RegisterForm() {
 		handleSubmit,
 		reset,
 		formState: { errors },
-	} = useForm<FormFields>();
+	} = useForm<RegisterFormFields>();
 
-	const onSubmit: SubmitHandler<FormFields> = async (data) => {
+	const onSubmit: SubmitHandler<RegisterFormFields> = async (data) => {
 		try {
 			console.log(data);
 			const res = await axios.post(`${BASE_URL}/api/auth/register`, data);
