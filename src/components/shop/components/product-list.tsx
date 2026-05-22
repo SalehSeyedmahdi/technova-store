@@ -3,11 +3,13 @@
 import { Product } from "@/components/admin/types/Product";
 import { BASE_URL } from "@/constants/BASE_URL";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function ProductList() {
 	const [loading, setLoading] = useState(false);
 	const [products, setProducts] = useState<Product[]>([]);
+	const router = useRouter();
 
 	useEffect(() => {
 		async function getProducts() {
@@ -42,6 +44,7 @@ export default function ProductList() {
 						<div
 							key={product.id}
 							className="flex flex-col justify-center items-center gap-4 border border-gray-200 rounded-lg cursor-pointer hover:shadow-2xl p-[16px]"
+							onClick={() => router.push(`/products/${product._id}`)}
 						>
 							<img src={product.images[0]} />
 							<h2 className="text-center text-[14px] text-gray-600" dir="rtl">
