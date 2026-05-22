@@ -10,10 +10,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-
-type SingleProductProps = {
-	id: string;
-};
+import { SingleProductProps } from "../types/SingleProductProps";
 
 export default function SingleProduct({ id }: SingleProductProps) {
 	const [loading, setLoading] = useState(true);
