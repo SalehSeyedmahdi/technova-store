@@ -3,13 +3,12 @@
 import { Product } from "@/components/admin/types/Product";
 import { BASE_URL } from "@/constants/BASE_URL";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import ProductCard from "./product-card";
 
 export default function ProductList() {
 	const [loading, setLoading] = useState(false);
 	const [products, setProducts] = useState<Product[]>([]);
-	const router = useRouter();
 
 	useEffect(() => {
 		async function getProducts() {
@@ -41,17 +40,7 @@ export default function ProductList() {
 			) : (
 				<div className="w-full grid grid-cols-1 gap-2 md:grid-cols-3">
 					{products.map((product) => (
-						<div
-							key={product.id}
-							className="flex flex-col justify-center items-center gap-4 border border-gray-200 rounded-lg cursor-pointer hover:shadow-2xl p-[16px]"
-							onClick={() => router.push(`/products/${product._id}`)}
-						>
-							<img src={product.images[0]} />
-							<h2 className="text-center text-[14px] text-gray-600" dir="rtl">
-								{product.title}
-							</h2>
-							<p dir="rtl">{`${product.price?.toLocaleString("fa-IR")} تومان`}</p>
-						</div>
+						<ProductCard key={product.id} product={product} />
 					))}
 				</div>
 			)}
