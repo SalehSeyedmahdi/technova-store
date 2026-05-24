@@ -6,7 +6,17 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import ProductCard from "./product-card";
 
-export default function ProductList() {
+type ProductListProps = {
+	category: string;
+	brand: string;
+	sort: string;
+};
+
+export default function ProductList({
+	category,
+	brand,
+	sort,
+}: ProductListProps) {
 	const [loading, setLoading] = useState(false);
 	const [products, setProducts] = useState<Product[]>([]);
 
@@ -15,9 +25,17 @@ export default function ProductList() {
 			try {
 				setLoading(true);
 
-				const res = await axios.get(`${BASE_URL}/api/products`);
+				const params = new URLSearchParams();
 
-				console.log(res.data.data);
+				if (category) params.append("category", category);
+				if (brand) params.append("brand", brand);
+				if (sort) params.append("sort", sort);
+
+				const queryString = params.toString();
+
+				const res = await axios.get(
+					`${BASE_URL}/api/products${queryString ? `?${queryString}` : ""}`,
+				);
 
 				setProducts(res.data.data);
 			} catch (error) {
@@ -28,7 +46,7 @@ export default function ProductList() {
 		}
 
 		getProducts();
-	}, []);
+	}, [category, brand, sort]);
 
 	return (
 		<div className="w-full md:w-3/4 flex flex-col justify-center items-center gap-10 bg-[#ffffff] rounded-lg p-[16px]">
