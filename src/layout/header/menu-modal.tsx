@@ -70,7 +70,7 @@ export default function MenuModal({ onClose }: MenuModalProps) {
 						className="flex justify-center items-center gap-1 cursor-pointer hover:text-blue-700"
 						onClick={() => {
 							onClose();
-							router.push("/products");
+							router.push("/products?category=smartphone");
 						}}
 					>
 						<li>موبایل</li>
@@ -81,7 +81,7 @@ export default function MenuModal({ onClose }: MenuModalProps) {
 						className="flex justify-center items-center gap-1 cursor-pointer hover:text-blue-700"
 						onClick={() => {
 							onClose();
-							router.push("/products");
+							router.push("/products?category=laptop");
 						}}
 					>
 						<li>لپ تاپ</li>
