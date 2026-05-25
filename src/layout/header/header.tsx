@@ -10,7 +10,7 @@ export default function Header() {
 	const [isMenuModalOpen, setIsMenuModalOpen] = useState(false);
 
 	return (
-		<header className="w-full fixed top-0 flex flex-col justify-center items-end gap-[12px] font-[yekanBakh] text-[20px] bg-[#ffffff] shadow-sm p-[2px] pl-[14px] pr-[14px]">
+		<header className="w-full fixed top-0 flex flex-col justify-center items-end gap-[12px] z-99 font-[yekanBakh] text-[20px] bg-[#ffffff] shadow-sm p-[2px] pl-[14px] pr-[14px]">
 			<div className="w-full flex justify-between items-center">
 				<img
 					src="/assets/svg/user.svg"
@@ -96,14 +96,14 @@ export default function Header() {
 				</div>
 				<div
 					className="flex justify-center items-center gap-1 cursor-pointer hover:text-blue-700"
-					onClick={() => router.push("/products")}
+					onClick={() => router.push("/products?category=laptop")}
 				>
 					<li>لپ تاپ</li>
 					<img src="/assets/svg/laptop.svg" className="w-4 h-4" />
 				</div>
 				<div
 					className="flex justify-center items-center gap-1 cursor-pointer hover:text-blue-700"
-					onClick={() => router.push("/products")}
+					onClick={() => router.push("/products?category=smartphone")}
 				>
 					<li>موبایل</li>
 					<img src="/assets/svg/mobile.svg" className="w-4 h-4" />

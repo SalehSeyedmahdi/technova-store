@@ -3,22 +3,39 @@
 import { Product } from "@/components/admin/types/Product";
 import { BASE_URL } from "@/constants/BASE_URL";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import ProductCard from "./product-card";
 
-export default function ProductList() {
+type ProductListProps = {
+	category: string;
+	brand: string;
+	sort: string;
+};
+
+export default function ProductList({
+	category,
+	brand,
+	sort,
+}: ProductListProps) {
 	const [loading, setLoading] = useState(false);
 	const [products, setProducts] = useState<Product[]>([]);
-	const router = useRouter();
 
 	useEffect(() => {
 		async function getProducts() {
 			try {
 				setLoading(true);
 
-				const res = await axios.get(`${BASE_URL}/api/products`);
+				const params = new URLSearchParams();
 
-				console.log(res.data.data);
+				if (category) params.append("category", category);
+				if (brand) params.append("brand", brand);
+				if (sort) params.append("sort", sort);
+
+				const queryString = params.toString();
+
+				const res = await axios.get(
+					`${BASE_URL}/api/products${queryString ? `?${queryString}` : ""}`,
+				);
 
 				setProducts(res.data.data);
 			} catch (error) {
@@ -29,7 +46,7 @@ export default function ProductList() {
 		}
 
 		getProducts();
-	}, []);
+	}, [category, brand, sort]);
 
 	return (
 		<div className="w-full md:w-3/4 flex flex-col justify-center items-center gap-10 bg-[#ffffff] rounded-lg p-[16px]">
@@ -41,17 +58,7 @@ export default function ProductList() {
 			) : (
 				<div className="w-full grid grid-cols-1 gap-2 md:grid-cols-3">
 					{products.map((product) => (
-						<div
-							key={product.id}
-							className="flex flex-col justify-center items-center gap-4 border border-gray-200 rounded-lg cursor-pointer hover:shadow-2xl p-[16px]"
-							onClick={() => router.push(`/products/${product._id}`)}
-						>
-							<img src={product.images[0]} />
-							<h2 className="text-center text-[14px] text-gray-600" dir="rtl">
-								{product.title}
-							</h2>
-							<p dir="rtl">{`${product.price?.toLocaleString("fa-IR")} تومان`}</p>
-						</div>
+						<ProductCard key={product.id} product={product} />
 					))}
 				</div>
 			)}
