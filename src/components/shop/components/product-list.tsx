@@ -4,13 +4,8 @@ import { Product } from "@/components/admin/types/Product";
 import { BASE_URL } from "@/constants/BASE_URL";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { ProductListProps } from "../types/ProductListProps";
 import ProductCard from "./product-card";
-
-type ProductListProps = {
-	category: string;
-	brand: string;
-	sort: string;
-};
 
 export default function ProductList({
 	category,

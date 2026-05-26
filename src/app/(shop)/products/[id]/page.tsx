@@ -8,7 +8,7 @@ export default async function SingleProductPage({
 	const { id } = await params;
 
 	return (
-		<div className="w-full h-full flex justify-center items-start font-[YekanBakh] bg-[#eaebfc] pt-[84px] md:pt-[140px] p-[20px]">
+		<div className="w-full h-full flex justify-center items-start font-[YekanBakh] bg-[#eaebfc] pt-[84px] md:pt-[140px] pb-[100px] md:pb-[20px] p-[20px]">
 			<SingleProduct id={id} />
 		</div>
 	);

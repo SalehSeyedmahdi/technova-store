@@ -1,11 +1,4 @@
-type ProductFilterProps = {
-	selectedCategory: string;
-	selectedBrand: string;
-	selectedSort: string;
-	onCategoryChange: (category: string) => void;
-	onBrandChange: (brand: string) => void;
-	onSortChange: (sort: string) => void;
-};
+import { ProductFilterProps } from "../types/ProductFilterProps";
 
 export default function FilterItem({
 	selectedCategory,

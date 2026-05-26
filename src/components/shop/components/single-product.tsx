@@ -4,20 +4,25 @@ import { Product } from "@/components/admin/types/Product";
 import { BASE_URL } from "@/constants/BASE_URL";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import type { Swiper as SwiperType } from "swiper";
 import { FreeMode, Thumbs } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import "../../../app/globals.css";
 import { SingleProductProps } from "../types/SingleProductProps";
+import { getCartId } from "../utils/cart-id";
 
 export default function SingleProduct({ id }: SingleProductProps) {
 	const [loading, setLoading] = useState(true);
 	const [product, setProduct] = useState<Product | null>(null);
 	const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
+
 	const [selectedColor, setSelectedColor] = useState<{
 		name: string;
 		hex: string;
 	} | null>(null);
+
+	const [cartQuantity, setCartQuantity] = useState(0);
+	const [cartItemId, setCartItemId] = useState<string | null>(null);
 
 	useEffect(() => {
 		async function getProduct() {
@@ -39,6 +44,160 @@ export default function SingleProduct({ id }: SingleProductProps) {
 			setSelectedColor(product.colors[0]);
 		}
 	}, [product]);
+
+	useEffect(() => {
+		async function checkProductInCart() {
+			if (!product || !selectedColor) return;
+
+			try {
+				const cartId = getCartId();
+				const res = await axios.get(`${BASE_URL}/api/cart?cartId=${cartId}`);
+
+				const cartItem = res.data.data.items.find(
+					(item: any) =>
+						item.product?._id === product._id &&
+						item.color?.hex === selectedColor.hex,
+				);
+
+				if (cartItem) {
+					setCartQuantity(cartItem.quantity);
+					setCartItemId(cartItem._id);
+				} else {
+					setCartQuantity(0);
+					setCartItemId(null);
+				}
+			} catch (error) {
+				console.error(error);
+			}
+		}
+
+		checkProductInCart();
+	}, [product, selectedColor]);
+
+	const handleAddToCart = async () => {
+		if (!product) return;
+
+		if (!selectedColor) {
+			toast.error("لطفاً رنگ محصول را انتخاب کنید");
+			return;
+		}
+
+		try {
+			const cartId = getCartId();
+
+			const res = await axios.post(`${BASE_URL}/api/cart/add`, {
+				cartId,
+				productId: product._id,
+				quantity: 1,
+				color: selectedColor,
+			});
+
+			const cartItem = res.data.data.items.find(
+				(item: any) =>
+					item.product?._id === product._id &&
+					item.color?.hex === selectedColor.hex,
+			);
+
+			setCartQuantity(cartItem?.quantity || 1);
+			setCartItemId(cartItem?._id || null);
+
+			toast.success("محصول به سبد خرید اضافه شد");
+		} catch (error) {
+			console.error(error);
+			toast.error("افزودن محصول به سبد خرید انجام نشد");
+		}
+	};
+
+	const increaseQuantity = async () => {
+		if (!cartItemId || !product) return;
+
+		if (cartQuantity >= product.stock) {
+			toast.error("موجودی کافی نیست");
+			return;
+		}
+
+		try {
+			const cartId = getCartId();
+			const newQuantity = cartQuantity + 1;
+
+			const res = await axios.put(`${BASE_URL}/api/cart/update/${cartItemId}`, {
+				cartId,
+				quantity: newQuantity,
+			});
+
+			const cartItem = res.data.data.items.find(
+				(item: any) => item._id === cartItemId,
+			);
+
+			setCartQuantity(cartItem?.quantity || newQuantity);
+		} catch (error) {
+			console.error(error);
+			toast.error("تغییر تعداد انجام نشد");
+		}
+	};
+
+	const decreaseQuantity = async () => {
+		if (!cartItemId) return;
+
+		try {
+			const cartId = getCartId();
+
+			if (cartQuantity <= 1) {
+				await axios.delete(`${BASE_URL}/api/cart/remove/${cartItemId}`, {
+					data: { cartId },
+				});
+
+				setCartQuantity(0);
+				setCartItemId(null);
+				return;
+			}
+
+			const newQuantity = cartQuantity - 1;
+
+			const res = await axios.put(`${BASE_URL}/api/cart/update/${cartItemId}`, {
+				cartId,
+				quantity: newQuantity,
+			});
+
+			const cartItem = res.data.data.items.find(
+				(item: any) => item._id === cartItemId,
+			);
+
+			setCartQuantity(cartItem?.quantity || newQuantity);
+		} catch (error) {
+			console.error(error);
+			toast.error("تغییر تعداد انجام نشد");
+		}
+	};
+
+	const CartAction = () =>
+		cartQuantity === 0 ? (
+			<button
+				onClick={handleAddToCart}
+				disabled={product?.stock === 0}
+				className="bg-blue-700 font-bold text-white rounded-lg px-6 py-3 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+			>
+				افزودن به سبد خرید
+			</button>
+		) : (
+			<div className="flex items-center gap-3">
+				<button
+					onClick={decreaseQuantity}
+					className="w-8 h-8 rounded-md bg-gray-100 cursor-pointer"
+				>
+					-
+				</button>
+
+				<span>{cartQuantity.toLocaleString("fa-IR")}</span>
+
+				<button
+					onClick={increaseQuantity}
+					className="w-8 h-8 rounded-md bg-gray-100 cursor-pointer"
+				>
+					+
+				</button>
+			</div>
+		);
 
 	return (
 		<div className="w-full min-h-screen flex flex-col justify-start items-center bg-white rounded-lg p-4 pb-24 md:pb-4">
@@ -68,7 +227,7 @@ export default function SingleProduct({ id }: SingleProductProps) {
 											<img
 												src={image}
 												alt={product.name}
-												className="w-full h-80 md:h-[420px] z-10 object-contain rounded-xl bg-white"
+												className="w-full h-80 md:h-[420px] object-contain rounded-xl bg-white"
 											/>
 										</SwiperSlide>
 									))}
@@ -103,19 +262,19 @@ export default function SingleProduct({ id }: SingleProductProps) {
 								</h1>
 
 								<div className="flex justify-center items-center gap-2">
-									{product.colors.map((item, index) => (
+									{product.colors?.map((item, index) => (
 										<div
+											key={index}
+											onClick={() => setSelectedColor(item)}
 											className={`w-7 h-7 flex justify-center items-center cursor-pointer rounded-full ${
 												selectedColor?.hex === item.hex
 													? "border-2 border-blue-700"
 													: "border border-gray-300"
 											}`}
-											key={index}
 										>
 											<div
 												className="w-6 h-6 border border-gray-300 rounded-full"
 												style={{ backgroundColor: item.hex }}
-												onClick={() => setSelectedColor(item)}
 											></div>
 										</div>
 									))}
@@ -160,24 +319,25 @@ export default function SingleProduct({ id }: SingleProductProps) {
 									<h2 className="font-bold mb-3 text-right" dir="rtl">
 										جزئیات محصول
 									</h2>
+
 									<div
 										className="flex flex-col justify-center items-start gap-2"
 										dir="rtl"
 									>
 										<p className="text-sm text-gray-500">
-											حافظه: {product.storageOptions[0]}
+											حافظه: {product.storageOptions?.[0]}
 										</p>
 										<p className="text-sm text-gray-500">
-											صفحه نمایش: {product.specifications.display}
+											صفحه نمایش: {product.specifications?.display}
 										</p>
 										<p className="text-sm text-gray-500">
-											رم: {product.specifications.ram}
+											رم: {product.specifications?.ram}
 										</p>
 										<p className="text-sm text-gray-500">
-											باتری: {product.specifications.battery}
+											باتری: {product.specifications?.battery}
 										</p>
 										<p className="text-sm text-gray-500">
-											سیستم عامل: {product.specifications.os}
+											سیستم عامل: {product.specifications?.os}
 										</p>
 									</div>
 								</div>
@@ -188,9 +348,7 @@ export default function SingleProduct({ id }: SingleProductProps) {
 									{product.price?.toLocaleString("fa-IR")} تومان
 								</p>
 
-								<button className="flex justify-center items-center text-sm text-white bg-blue-700 hover:opacity-80 rounded-lg cursor-pointer px-6 py-3">
-									افزودن به سبد خرید
-								</button>
+								<CartAction />
 							</div>
 						</div>
 
@@ -199,43 +357,30 @@ export default function SingleProduct({ id }: SingleProductProps) {
 								{product.price?.toLocaleString("fa-IR")} تومان
 							</p>
 
-							<button
-								disabled={product.stock <= 0}
-								className="w-full flex justify-center items-center text-sm text-white bg-blue-700 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg cursor-pointer px-6 py-3"
-							>
-								افزودن به سبد خرید
-							</button>
+							<CartAction />
+
 							<div
 								className="flex flex-col justify-center items-start gap-5 text-[14px] text-gray-600"
 								dir="rtl"
 							>
-								<div
-									className="flex justify-center items-center gap-1"
-									dir="rtl"
-								>
-									<img src="../assets/svg/delivery.svg" className="w-5 h-5" />
+								<div className="flex justify-center items-center gap-1">
+									<img src="/assets/svg/delivery.svg" className="w-5 h-5" />
 									<p>ارسال پستی رایگان</p>
 								</div>
-								<div
-									className="flex justify-center items-center gap-1"
-									dir="rtl"
-								>
-									<img src="../assets/svg/clock-time.svg" className="w-5 h-5" />
+
+								<div className="flex justify-center items-center gap-1">
+									<img src="/assets/svg/clock-time.svg" className="w-5 h-5" />
 									<p>تحویل فوری</p>
 								</div>
-								<div
-									className="flex justify-center items-center gap-1"
-									dir="rtl"
-								>
-									<img src="../assets/svg/gift.svg" className="w-5 h-5" />
+
+								<div className="flex justify-center items-center gap-1">
+									<img src="/assets/svg/gift.svg" className="w-5 h-5" />
 									<p>بسته بندی ویژه</p>
 								</div>
-								<div
-									className="flex justify-center items-center gap-1"
-									dir="rtl"
-								>
-									<img src="../assets/svg/verified.svg" className="w-5 h-5" />
-									<p>صمانت اصالت کالا</p>
+
+								<div className="flex justify-center items-center gap-1">
+									<img src="/assets/svg/verified.svg" className="w-5 h-5" />
+									<p>ضمانت اصالت کالا</p>
 								</div>
 							</div>
 						</div>
