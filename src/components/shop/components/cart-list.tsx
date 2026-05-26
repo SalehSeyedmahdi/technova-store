@@ -2,6 +2,7 @@
 
 import { BASE_URL } from "@/constants/BASE_URL";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getCartId } from "../utils/cart-id";
@@ -10,6 +11,7 @@ export default function CartList() {
 	const [cart, setCart] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
 	const [updatingItemId, setUpdatingItemId] = useState<string | null>(null);
+	const router = useRouter();
 
 	useEffect(() => {
 		async function getCart() {
@@ -167,7 +169,10 @@ export default function CartList() {
 			))}
 
 			<div className="w-full fixed bottom-0 left-0 right-0 flex md:flex-row-reverse justify-between items-center shadow-[0_-1px_4px_rgba(0,0,0,0.1)] bg-white px-8 py-6">
-				<button className="font-bold text-[12px] md:text-[15px] text-[#ffffff] rounded-md bg-blue-600 hover:bg-blue-700 cursor-pointer px-6 py-3">
+				<button
+					className="font-bold text-[12px] md:text-[15px] text-[#ffffff] rounded-md bg-blue-600 hover:bg-blue-700 cursor-pointer px-6 py-3"
+					onClick={() => router.push("/checkout")}
+				>
 					تایید و تکمیل سفارش
 				</button>
 				<div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2">

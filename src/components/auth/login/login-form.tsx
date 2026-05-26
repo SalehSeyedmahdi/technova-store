@@ -1,5 +1,6 @@
 "use client";
 
+import { getCartId } from "@/components/shop/utils/cart-id";
 import { BASE_URL } from "@/constants/BASE_URL";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -12,7 +13,8 @@ import { LoginFormFields } from "../types/LoginFormFields";
 export default function LoginForm() {
 	const router = useRouter();
 	const [showPassword, setShowPassword] = useState(false);
-	const [cookies, setCookies] = useCookies(["token", "refresh_token", "role"]);
+	const [, setCookies] = useCookies(["token", "refresh_token", "role"]);
+
 	const {
 		register,
 		handleSubmit,
@@ -22,12 +24,12 @@ export default function LoginForm() {
 
 	const onSubmit: SubmitHandler<LoginFormFields> = async (data) => {
 		try {
-			console.log(data);
 			const res = await axios.post(`${BASE_URL}/api/auth/login`, data);
-			console.log(res.data.data);
+
 			const token = res.data.data.token;
 			const refresh_token = res.data.data.refreshToken;
 			const role = res.data.data.user.role;
+
 			setCookies("token", token, {
 				path: "/",
 				maxAge: 60 * 60 * 24 * 7,
@@ -41,11 +43,26 @@ export default function LoginForm() {
 				secure: true,
 				sameSite: "strict",
 			});
+
 			setCookies("role", role, {
 				path: "/",
 			});
+
+			const cartId = getCartId();
+
+			await axios.post(
+				`${BASE_URL}/api/cart/merge`,
+				{ cartId },
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				},
+			);
+
 			reset();
 			toast.success("ورود با موفقیت انجام شد.");
+
 			setTimeout(() => {
 				if (role === "admin") {
 					router.replace("/admin");
@@ -73,12 +90,13 @@ export default function LoginForm() {
 				/>
 				<p className="text-[12px] text-gray-600">وارد حساب کاربری خود شوید</p>
 			</div>
+
 			<div className="flex flex-col gap-5">
 				<div className="flex flex-col justify-center items-start gap-1">
 					<label className="text-[14px] text-gray-700">ایمیل</label>
 					<label className="relative">
 						<img
-							src="assets/svg/user-input.svg"
+							src="/assets/svg/user-input.svg"
 							className="w-5 h-5 absolute right-2 top-3"
 						/>
 						<input
@@ -101,31 +119,22 @@ export default function LoginForm() {
 						)}
 					</label>
 				</div>
+
 				<div className="flex flex-col justify-center items-start gap-1">
 					<label className="text-[14px] text-gray-700">رمز عبور</label>
 					<label className="relative">
 						<img
-							src="assets/svg/lock.svg"
+							src="/assets/svg/lock.svg"
 							className="w-5 h-5 absolute right-2 top-3"
 						/>
 						<img
-							src="assets/svg/show.svg"
+							src="/assets/svg/show.svg"
 							className="w-5.5 h-5.5 absolute top-3 left-2 hover:opacity-60 cursor-pointer"
 							onClick={() => setShowPassword((prev) => !prev)}
 						/>
 						<input
 							{...register("password", {
 								required: "رمز عبور الزامی است",
-								minLength: {
-									value: 8,
-									message: "رمز عبور باید حداقل 8 کاراکتر باشد",
-								},
-								pattern: {
-									value:
-										/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-									message:
-										"رمز عبور باید شامل حروف بزرگ، کوچک، عدد و کاراکتر خاص باشد",
-								},
 							})}
 							type={showPassword ? "text" : "password"}
 							dir="ltr"
@@ -140,12 +149,14 @@ export default function LoginForm() {
 					</label>
 				</div>
 			</div>
+
 			<button
 				className="flex justify-center items-center text-white bg-blue-800 hover:opacity-60 cursor-pointer rounded-xl p-3 pr-17 pl-17"
 				type="submit"
 			>
 				ورود به حساب
 			</button>
+
 			<p className="text-[12px] text-gray-700">
 				هنوز عضو نشده اید؟{" "}
 				<span
