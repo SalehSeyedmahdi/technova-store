@@ -67,7 +67,7 @@ export default function CheckoutClient() {
 			toast.success("سفارش با موفقیت ثبت شد");
 
 			setTimeout(() => {
-				router.replace("/orders");
+				router.replace("/dashboard/orders");
 			}, 1000);
 		} catch (error) {
 			console.error(error);

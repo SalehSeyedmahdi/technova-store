@@ -1,3 +1,4 @@
+import DashboardFooter from "@/layout/dashboard-footer/dashboard-footer";
 import DashboardHeader from "@/layout/dashboard-header/dashboard-header";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -27,6 +28,7 @@ export default function RootLayout({
 		<>
 			<DashboardHeader />
 			{children}
+			<DashboardFooter />
 		</>
 	);
 }
