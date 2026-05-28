@@ -4,7 +4,6 @@ import { BASE_URL } from "@/constants/BASE_URL";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useCookies } from "react-cookie";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { getCartId } from "../utils/cart-id";
@@ -33,12 +32,42 @@ const shippingMethods = [
 	},
 ];
 
+const getDeliveryDates = () => {
+	const today = new Date();
+
+	return [1, 2, 3].map((day) => {
+		const date = new Date(today);
+
+		date.setDate(today.getDate() + day);
+
+		const weekday = date.toLocaleDateString("fa-IR", {
+			weekday: "long",
+		});
+
+		const fullDate = date.toLocaleDateString("fa-IR", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		});
+
+		return {
+			id: date.toISOString(),
+			value: date.toISOString(),
+			label: `${weekday}، ${fullDate}`,
+		};
+	});
+};
+
 export default function CheckoutClient() {
 	const router = useRouter();
-	const [cookies] = useCookies(["token"]);
 	const [cart, setCart] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
 	const [selectedShippingId, setSelectedShippingId] = useState("express");
+
+	const deliveryDates = useMemo(() => getDeliveryDates(), []);
+	const [selectedDeliveryDate, setSelectedDeliveryDate] = useState(
+		deliveryDates[0].value,
+	);
 
 	const selectedShipping = useMemo(() => {
 		return (
@@ -73,39 +102,34 @@ export default function CheckoutClient() {
 
 	const onSubmit: SubmitHandler<CheckoutFormFields> = async (data) => {
 		try {
-			await axios.post(
-				`${BASE_URL}/api/orders`,
-				{
-					shippingAddress: {
-						name: data.fullName,
-						phone: data.phone,
-						province: data.province,
-						city: data.city,
-						address: data.address,
-						postalCode: data.postalCode,
-					},
-					shippingMethod: {
-						id: selectedShipping.id,
-						title: selectedShipping.title,
-						price: 0,
-					},
-					paymentMethod: "cash",
+			const checkoutData = {
+				shippingAddress: {
+					name: data.fullName,
+					phone: data.phone,
+					province: data.province,
+					city: data.city,
+					address: data.address,
+					postalCode: data.postalCode,
 				},
-				{
-					headers: {
-						Authorization: `Bearer ${cookies.token}`,
-					},
+				shippingMethod: {
+					id: selectedShipping.id,
+					title: selectedShipping.title,
+					price: 0,
 				},
-			);
+				deliveryDate: selectedDeliveryDate,
+				paymentMethod: "cash",
+			};
 
-			toast.success("سفارش با موفقیت ثبت شد");
+			sessionStorage.setItem("checkoutData", JSON.stringify(checkoutData));
+
+			toast.success("در حال انتقال به صفحه پرداخت");
 
 			setTimeout(() => {
-				router.replace("/dashboard/orders");
-			}, 1000);
+				router.push("/payment");
+			}, 500);
 		} catch (error) {
 			console.error(error);
-			toast.error("ثبت سفارش انجام نشد");
+			toast.error("خطا در انتقال به صفحه پرداخت");
 		}
 	};
 
@@ -126,7 +150,7 @@ export default function CheckoutClient() {
 	}
 
 	return (
-		<div className="w-full flex flex-col md:flex-row-reverse gap-4">
+		<div className="w-full flex flex-col-reverse md:flex-row-reverse gap-4">
 			<form
 				onSubmit={handleSubmit(onSubmit)}
 				className="w-full md:w-2/3 bg-white rounded-xl p-6 flex flex-col gap-6"
@@ -159,7 +183,7 @@ export default function CheckoutClient() {
 							})}
 							className="border border-gray-300 rounded-xl p-3 outline-none"
 							placeholder="شماره تماس"
-							dir="ltr"
+							dir="rtl"
 						/>
 						{errors.phone && (
 							<p className="text-xs text-red-600">{errors.phone.message}</p>
@@ -255,6 +279,28 @@ export default function CheckoutClient() {
 					</div>
 				</div>
 
+				<div className="flex flex-col gap-4">
+					<h2 className="font-bold text-xl text-gray-700">تاریخ ارسال</h2>
+
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+						{deliveryDates.map((date) => (
+							<button
+								key={date.id}
+								type="button"
+								dir="rtl"
+								onClick={() => setSelectedDeliveryDate(date.value)}
+								className={`border rounded-xl p-4 transition cursor-pointer ${
+									selectedDeliveryDate === date.value
+										? "border-blue-700 bg-blue-50"
+										: "border-gray-300 bg-white"
+								}`}
+							>
+								<p className="font-bold text-gray-700">{date.label}</p>
+							</button>
+						))}
+					</div>
+				</div>
+
 				<button
 					type="submit"
 					disabled={isSubmitting}
@@ -303,6 +349,16 @@ export default function CheckoutClient() {
 				<div className="flex justify-between items-center" dir="rtl">
 					<span className="text-sm text-gray-600">هزینه ارسال:</span>
 					<span className="font-bold text-green-600">رایگان</span>
+				</div>
+
+				<div className="flex justify-between items-center" dir="rtl">
+					<span className="text-sm text-gray-600">تاریخ ارسال:</span>
+					<span className="text-sm text-gray-700">
+						{
+							deliveryDates.find((date) => date.value === selectedDeliveryDate)
+								?.label
+						}
+					</span>
 				</div>
 
 				<div
