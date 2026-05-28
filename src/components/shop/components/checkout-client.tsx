@@ -6,16 +6,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { CheckoutFormFields } from "../types/CheckoutFormFields";
 import { getCartId } from "../utils/cart-id";
-
-type CheckoutFormFields = {
-	fullName: string;
-	phone: string;
-	province: string;
-	city: string;
-	address: string;
-	postalCode: string;
-};
 
 const shippingMethods = [
 	{
@@ -104,7 +96,7 @@ export default function CheckoutClient() {
 		try {
 			const checkoutData = {
 				shippingAddress: {
-					name: data.fullName,
+					fullName: data.fullName,
 					phone: data.phone,
 					province: data.province,
 					city: data.city,

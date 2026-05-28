@@ -175,7 +175,7 @@ export default function SingleProduct({ id }: SingleProductProps) {
 			<button
 				onClick={handleAddToCart}
 				disabled={product?.stock === 0}
-				className="bg-blue-700 font-bold text-white rounded-lg px-6 py-3 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+				className="bg-blue-700 text-white rounded-lg px-6 py-3 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
 			>
 				افزودن به سبد خرید
 			</button>
