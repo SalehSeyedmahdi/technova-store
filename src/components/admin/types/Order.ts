@@ -12,6 +12,24 @@ export type Order = {
 		postalCode?: string;
 	};
 
+	orderItems?: {
+		_id?: string;
+		name: string;
+		image: string;
+		price: number;
+		quantity: number;
+	}[];
+
+	shippingMethod?: {
+		id?: string;
+		title?: string;
+		price?: number;
+	};
+
+	deliveryDate?: string;
+
+	paymentMethod?: string;
+
 	totalPrice: number;
 
 	createdAt?: string;

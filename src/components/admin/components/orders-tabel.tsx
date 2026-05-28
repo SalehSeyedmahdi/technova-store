@@ -7,6 +7,7 @@ import { useCookies } from "react-cookie";
 import { toast } from "react-toastify";
 import { Order } from "../types/Order";
 import { OrderStatus } from "../types/OrderStatus";
+import OrderDetailsModal from "./order-details-modal";
 import ChangeOrderStatusModal from "./order-status-modal";
 
 export default function OrdersTable() {
@@ -31,8 +32,10 @@ export default function OrdersTable() {
 	const [page, setPage] = useState(1);
 	const [pages, setPages] = useState(1);
 	const [loading, setLoading] = useState(false);
+
 	const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 	const [changeStatusModalOpen, setChangeStatusModalOpen] = useState(false);
+	const [orderDetailsModalOpen, setOrderDetailsModalOpen] = useState(false);
 	const [changeStatus, setChangeStatus] = useState(false);
 
 	useEffect(() => {
@@ -64,6 +67,11 @@ export default function OrdersTable() {
 	const openChangeStatusModal = (order: Order) => {
 		setSelectedOrder(order);
 		setChangeStatusModalOpen(true);
+	};
+
+	const openOrderDetailsModal = (order: Order) => {
+		setSelectedOrder(order);
+		setOrderDetailsModalOpen(true);
 	};
 
 	const handleChangeStatus = async (newStatus: OrderStatus) => {
@@ -129,8 +137,21 @@ export default function OrdersTable() {
 									<div className="flex justify-center items-center gap-2">
 										<button
 											type="button"
+											onClick={() => openOrderDetailsModal(order)}
+											className="bg-green-500 cursor-pointer hover:opacity-60 rounded-md p-0.5 md:p-1"
+											title="جزئیات سفارش"
+										>
+											<img
+												src="../assets/svg/white-info.svg"
+												className="w-4 md:w-5 h-4 md:h-5"
+											/>
+										</button>
+
+										<button
+											type="button"
 											onClick={() => openChangeStatusModal(order)}
 											className="bg-blue-500 cursor-pointer hover:opacity-60 rounded-md p-0.5 md:p-1"
+											title="تغییر وضعیت"
 										>
 											<img
 												src="../assets/svg/edit.svg"
@@ -195,6 +216,16 @@ export default function OrdersTable() {
 					بعدی
 				</button>
 			</div>
+
+			{orderDetailsModalOpen && selectedOrder && (
+				<OrderDetailsModal
+					order={selectedOrder}
+					onClose={() => {
+						setOrderDetailsModalOpen(false);
+						setSelectedOrder(null);
+					}}
+				/>
+			)}
 
 			{changeStatusModalOpen && selectedOrder && (
 				<ChangeOrderStatusModal
