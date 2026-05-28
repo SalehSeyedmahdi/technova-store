@@ -92,7 +92,7 @@ export default function UserOrders() {
 						<p>
 							<span className="font-bold text-gray-700">روش پرداخت:</span>{" "}
 							{order.paymentMethod === "cash"
-								? "پرداخت در محل"
+								? "پرداخت آنلاین"
 								: order.paymentMethod}
 						</p>
 					</div>

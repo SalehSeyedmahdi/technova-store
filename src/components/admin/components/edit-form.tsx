@@ -34,6 +34,7 @@ export default function EditForm({ id }: EditFormProps) {
 					price: product.price,
 					category: product.category,
 					images: product.images || [],
+					description: product.description,
 				});
 			} catch (error) {
 				console.error(error);
@@ -51,6 +52,7 @@ export default function EditForm({ id }: EditFormProps) {
 				brand: data.brand,
 				price: data.price,
 				images: data.images,
+				description: data.description,
 			};
 			console.log(cookies.token);
 
@@ -78,7 +80,7 @@ export default function EditForm({ id }: EditFormProps) {
 
 	return (
 		<form
-			className="h-130 md:h-auto flex flex-col justify-between items-center gap-6 overflow-y-auto bg-[#ffffff] rounded-2xl p-8"
+			className="h-130 md:h-auto flex flex-col justify-between items-center gap-6 overflow-y-auto bg-[#ffffff] rounded-2xl p-8 md:p-[14px]"
 			onSubmit={handleSubmit(onSubmit)}
 		>
 			<h1 className="font-bold text-[20px]">ویرایش محصول</h1>
@@ -164,6 +166,21 @@ export default function EditForm({ id }: EditFormProps) {
 							{errors.images.message}
 						</p>
 					)}
+				</label>
+				<label className="relative md:col-span-2">
+					<label>توضیحات</label>
+					<textarea
+						{...register("description", { required: "توضیحات الزامی است" })}
+						placeholder="توضیحات محصول را وارد کنید"
+						dir="rtl"
+						className="w-full text-[14px] text-right border border-gray-400 outline-none rounded-xl p-3"
+					>
+						{errors.description && (
+							<p className="absolute right-2 text-[12px] text-red-600">
+								{errors.description.message}
+							</p>
+						)}
+					</textarea>
 				</label>
 			</div>
 			<button className="w-full flex justify-center items-center font-bold text-[#ffffff] bg-blue-800 hover:opacity-60 cursor-pointer rounded-xl p-3">

@@ -163,7 +163,9 @@ export default function ProductTable() {
 					dir="rtl"
 					className="flex justify-center items-center border rounded-md p-1 pr-3 pl-3"
 				>
-					{`${pages} از ${page}`}
+					{`${pages.toLocaleString("fa-IR")} از ${page.toLocaleString(
+						"fa-IR",
+					)}`}
 				</div>
 
 				<button

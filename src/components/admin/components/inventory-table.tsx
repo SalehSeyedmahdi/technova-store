@@ -23,9 +23,11 @@ export default function InventoryTable() {
 		async function getProducts() {
 			try {
 				setLoading(true);
+
 				const res = await axios.get(
 					`${BASE_URL}/api/products?page=${page}&limit=5`,
 				);
+
 				setProducts(res.data.data);
 				setPages(res.data.pages);
 			} catch (error) {
@@ -43,7 +45,10 @@ export default function InventoryTable() {
 		setChangeInventoryModalOpen(true);
 	};
 
-	const handleChangeInventory = async (newStock: number) => {
+	const handleChangeInventory = async (data: {
+		stock: number;
+		price: number;
+	}) => {
 		if (!selectedProduct) return;
 
 		try {
@@ -52,7 +57,8 @@ export default function InventoryTable() {
 			await axios.put(
 				`${BASE_URL}/api/products/${selectedProduct._id}`,
 				{
-					stock: newStock,
+					stock: data.stock,
+					price: data.price,
 				},
 				{
 					headers: {
@@ -64,18 +70,22 @@ export default function InventoryTable() {
 			setProducts((prev) =>
 				prev.map((product) =>
 					product._id === selectedProduct._id
-						? { ...product, stock: newStock }
+						? {
+								...product,
+								stock: data.stock,
+								price: data.price,
+							}
 						: product,
 				),
 			);
 
-			toast.success("موجودی محصول با موفقیت ویرایش شد");
+			toast.success("موجودی و قیمت با موفقیت ویرایش شد");
 
 			setChangeInventoryModalOpen(false);
 			setSelectedProduct(null);
 		} catch (error) {
 			console.error(error);
-			toast.error("ویرایش موجودی محصول با خطا مواجه شد");
+			toast.error("ویرایش موجودی و قیمت با خطا مواجه شد");
 		} finally {
 			setChangeInventory(false);
 		}
@@ -100,7 +110,7 @@ export default function InventoryTable() {
 						</tr>
 					</thead>
 
-					<tbody className="bg-[#ffffff]">
+					<tbody className="bg-white">
 						{products.map((product) => (
 							<tr key={product._id} className="text-[12px] md:text-[14px]">
 								<td className="p-2">
@@ -117,18 +127,24 @@ export default function InventoryTable() {
 										</button>
 									</div>
 								</td>
+
 								<td className="p-2">
 									{product.stock?.toLocaleString("fa-IR")}
 								</td>
+
 								<td className="p-2">
 									{product.price?.toLocaleString("fa-IR")}
 								</td>
+
 								<td className="p-2">{product.brand}</td>
+
 								<td className="p-2">{product.name}</td>
+
 								<td className="p-2">
 									<div className="flex justify-center items-center">
 										<img
 											src={product.images[0]}
+											alt={product.name}
 											className="w-10 h-10 object-cover"
 										/>
 									</div>
@@ -142,7 +158,7 @@ export default function InventoryTable() {
 			<div className="flex gap-2">
 				<button
 					onClick={() => setPage((prev) => prev - 1)}
-					className="text-[12px] md:text-[16px] text-[#ffffff] bg-red-700 rounded-md cursor-pointer disabled:opacity-20 hover:opacity-70 p-1 pr-3 pl-3"
+					className="text-[12px] md:text-[16px] text-white bg-red-700 rounded-md cursor-pointer disabled:opacity-20 hover:opacity-70 p-1 pr-3 pl-3"
 					disabled={page === 1}
 				>
 					قبلی
@@ -152,12 +168,14 @@ export default function InventoryTable() {
 					dir="rtl"
 					className="flex justify-center items-center border rounded-md p-1 pr-3 pl-3"
 				>
-					{`${pages} از ${page}`}
+					{`${pages.toLocaleString("fa-IR")} از ${page.toLocaleString(
+						"fa-IR",
+					)}`}
 				</div>
 
 				<button
 					onClick={() => setPage((prev) => prev + 1)}
-					className="text-[12px] md:text-[16px] text-[#ffffff] bg-red-700 rounded-md cursor-pointer disabled:opacity-20 hover:opacity-70 p-1 pr-3 pl-3"
+					className="text-[12px] md:text-[16px] text-white bg-red-700 rounded-md cursor-pointer disabled:opacity-20 hover:opacity-70 p-1 pr-3 pl-3"
 					disabled={page === pages}
 				>
 					بعدی
@@ -168,6 +186,7 @@ export default function InventoryTable() {
 				<ChangeInventoryModal
 					productName={selectedProduct.name}
 					stock={selectedProduct.stock}
+					price={selectedProduct.price}
 					updating={changeInventory}
 					onClose={() => {
 						setChangeInventoryModalOpen(false);
