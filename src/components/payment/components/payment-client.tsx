@@ -7,15 +7,7 @@ import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-
-type PaymentFormFields = {
-	cardNumber: string;
-	cvv2: string;
-	secondPassword: string;
-	month: string;
-	year: string;
-	securityCode: string;
-};
+import { PaymentFormFields } from "../types/PaymentFormFields";
 
 export default function PaymentClient() {
 	const router = useRouter();

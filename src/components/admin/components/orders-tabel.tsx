@@ -17,13 +17,15 @@ export default function OrdersTable() {
 		delivered: "تحویل داده شده",
 		cancelled: "لغو شده",
 	};
+
 	const statusStyles = {
-		pending: "text-[#ffffff] bg-yellow-400",
-		confirmed: "text-[#ffffff] bg-blue-400",
-		shipping: "text-[#ffffff] bg-purple-400",
-		delivered: "text-[#ffffff] bg-green-400",
-		cancelled: "text-[#ffffff] bg-red-400",
+		pending: "text-white bg-yellow-400",
+		confirmed: "text-white bg-blue-400",
+		shipping: "text-white bg-purple-400",
+		delivered: "text-white bg-green-400",
+		cancelled: "text-white bg-red-400",
 	};
+
 	const [orders, setOrders] = useState<Order[]>([]);
 	const [cookies] = useCookies(["token"]);
 	const [page, setPage] = useState(1);
@@ -37,6 +39,7 @@ export default function OrdersTable() {
 		async function getOrders() {
 			try {
 				setLoading(true);
+
 				const res = await axios.get(
 					`${BASE_URL}/api/orders/admin/all?page=${page}&limit=5`,
 					{
@@ -45,7 +48,6 @@ export default function OrdersTable() {
 						},
 					},
 				);
-				console.log(res.data);
 
 				setOrders(res.data.data);
 				setPages(res.data.pages);
@@ -57,7 +59,7 @@ export default function OrdersTable() {
 		}
 
 		getOrders();
-	}, [page]);
+	}, [page, cookies.token]);
 
 	const openChangeStatusModal = (order: Order) => {
 		setSelectedOrder(order);
@@ -71,7 +73,7 @@ export default function OrdersTable() {
 			setChangeStatus(true);
 
 			await axios.put(
-				`${BASE_URL}/api/orders/${selectedOrder._id}`,
+				`${BASE_URL}/api/orders/${selectedOrder._id}/status`,
 				{
 					status: newStatus,
 				},
@@ -120,7 +122,7 @@ export default function OrdersTable() {
 						</tr>
 					</thead>
 
-					<tbody className="bg-[#ffffff]">
+					<tbody className="bg-white">
 						{orders.map((order) => (
 							<tr key={order._id} className="text-[12px] md:text-[14px]">
 								<td className="p-2">
@@ -137,23 +139,29 @@ export default function OrdersTable() {
 										</button>
 									</div>
 								</td>
+
 								<td className="p-2">
 									<span
-										className={`px-1 py-0.5 md:px-2 md:py-1 rounded-md text-[6px] md:text-[12px] ${statusStyles[order.status]}`}
+										className={`px-1 py-0.5 md:px-2 md:py-1 rounded-md text-[6px] md:text-[12px] ${
+											statusStyles[order.status]
+										}`}
 									>
 										{statusLabels[order.status] || order.status}
 									</span>
 								</td>
+
 								<td className="p-2">
 									{order.createdAt
 										? new Date(order.createdAt).toLocaleDateString("fa-IR")
 										: order.time || "-"}
 								</td>
+
 								<td className="p-2">
 									{order.totalPrice?.toLocaleString("fa-IR")}
 								</td>
+
 								<td className="p-2">
-									{order.shippingAddress?.fullName || order.fullName || "-"}
+									{order.shippingAddress?.fullName || "-"}
 								</td>
 							</tr>
 						))}
@@ -164,7 +172,7 @@ export default function OrdersTable() {
 			<div className="flex gap-2">
 				<button
 					onClick={() => setPage((prev) => prev - 1)}
-					className="text-[12px] md:text-[16px] text-[#ffffff] bg-red-700 rounded-md cursor-pointer disabled:opacity-20 hover:opacity-70 p-1 pr-3 pl-3"
+					className="text-[12px] md:text-[16px] text-white bg-red-700 rounded-md cursor-pointer disabled:opacity-20 hover:opacity-70 p-1 pr-3 pl-3"
 					disabled={page === 1}
 				>
 					قبلی
@@ -179,7 +187,7 @@ export default function OrdersTable() {
 
 				<button
 					onClick={() => setPage((prev) => prev + 1)}
-					className="text-[12px] md:text-[16px] text-[#ffffff] bg-red-700 rounded-md cursor-pointer disabled:opacity-20 hover:opacity-70 p-1 pr-3 pl-3"
+					className="text-[12px] md:text-[16px] text-white bg-red-700 rounded-md cursor-pointer disabled:opacity-20 hover:opacity-70 p-1 pr-3 pl-3"
 					disabled={page === pages}
 				>
 					بعدی
@@ -188,11 +196,7 @@ export default function OrdersTable() {
 
 			{changeStatusModalOpen && selectedOrder && (
 				<ChangeOrderStatusModal
-					fullName={
-						selectedOrder.shippingAddress?.fullName ||
-						selectedOrder.fullName ||
-						"-"
-					}
+					fullName={selectedOrder.shippingAddress?.fullName || "-"}
 					status={selectedOrder.status}
 					updating={changeStatus}
 					onClose={() => {
