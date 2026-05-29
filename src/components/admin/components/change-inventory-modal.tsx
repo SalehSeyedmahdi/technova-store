@@ -6,39 +6,74 @@ import { ProductModalProps } from "../types/ProductModalProps";
 export default function ChangeInventoryModal({
 	productName,
 	stock,
+	price,
 	updating,
 	onClose,
 	onConfirm,
 }: ProductModalProps) {
 	const [stockValue, setStockValue] = useState(stock);
+	const [priceValue, setPriceValue] = useState(price);
 
 	useEffect(() => {
 		setStockValue(stock);
-	}, [stock]);
+		setPriceValue(price);
+	}, [stock, price]);
 
 	const handleSubmit = () => {
-		if (stockValue < 0) return;
-		onConfirm(stockValue);
+		if (stockValue < 0 || priceValue < 0) return;
+
+		onConfirm({
+			stock: stockValue,
+			price: priceValue,
+		});
 	};
 
 	return (
 		<div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
 			<div className="w-[90%] max-w-sm bg-white p-6 rounded-2xl shadow-lg">
 				<h2 className="text-lg font-bold mb-2 text-center">
-					ویرایش موجودی محصول
+					ویرایش موجودی و قیمت محصول
 				</h2>
 
-				<p className="mb-4 text-sm text-gray-600 text-center" dir="rtl">
-					موجودی محصول را ویرایش کنید.
-				</p>
+				<div className="mb-4 text-center" dir="rtl">
+					<p className="text-sm text-gray-600">
+						موجودی و قیمت محصول زیر را ویرایش کنید:
+					</p>
 
-				<input
-					type="number"
-					min={0}
-					value={stockValue}
-					onChange={(e) => setStockValue(Number(e.target.value))}
-					className="w-full border border-gray-300 rounded-xl p-3 text-center outline-none focus:border-blue-600"
-				/>
+					<p className="font-bold text-gray-800 mt-2">{productName}</p>
+				</div>
+
+				<div className="flex flex-col gap-3">
+					<div className="flex flex-col gap-1">
+						<label className="text-sm text-gray-600 text-right" dir="rtl">
+							موجودی
+						</label>
+
+						<input
+							type="number"
+							min={0}
+							value={stockValue}
+							onChange={(e) => setStockValue(Number(e.target.value))}
+							className="w-full border border-gray-300 rounded-xl p-3 text-center outline-none focus:border-blue-600"
+							dir="ltr"
+						/>
+					</div>
+
+					<div className="flex flex-col gap-1">
+						<label className="text-sm text-gray-600 text-right" dir="rtl">
+							قیمت محصول
+						</label>
+
+						<input
+							type="number"
+							min={0}
+							value={priceValue}
+							onChange={(e) => setPriceValue(Number(e.target.value))}
+							className="w-full border border-gray-300 rounded-xl p-3 text-center outline-none focus:border-blue-600"
+							dir="ltr"
+						/>
+					</div>
+				</div>
 
 				<div className="flex justify-center gap-2 mt-5">
 					<button
@@ -53,7 +88,7 @@ export default function ChangeInventoryModal({
 					<button
 						type="button"
 						onClick={handleSubmit}
-						disabled={updating || stockValue < 0}
+						disabled={updating || stockValue < 0 || priceValue < 0}
 						className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:opacity-80 disabled:opacity-50"
 					>
 						{updating ? "در حال ویرایش..." : "تأیید"}

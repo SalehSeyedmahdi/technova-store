@@ -1,5 +1,3 @@
-import Footer from "@/layout/footer/footer";
-import Header from "@/layout/header/header";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
@@ -15,9 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "تکنوا | فروشگاه محصولات دیجیتال",
-	description:
-		"فروشگاه اینترنتی تکنوا برای خرید موبایل، لپ‌تاپ و لوازم جانبی دیجیتال",
+	title: "پرداخت",
+	description: "پرداخت سفارش در تکنوا",
 };
 
 export default function RootLayout({
@@ -25,11 +22,5 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	return (
-		<>
-			<Header />
-			{children}
-			<Footer />
-		</>
-	);
+	return <>{children}</>;
 }

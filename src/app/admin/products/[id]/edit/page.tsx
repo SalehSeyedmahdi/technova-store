@@ -8,7 +8,7 @@ export default async function EditProductPage({
 	const { id } = await params;
 
 	return (
-		<div className="w-full h-screen flex justify-center items-center font-[YekanBakh] bg-[#eaebfc]">
+		<div className="w-full h-screen flex justify-center items-center font-[YekanBakh] bg-[#eaebfc] pt-[4px] ">
 			<EditForm id={id} />
 		</div>
 	);

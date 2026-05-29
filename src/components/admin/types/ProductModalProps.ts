@@ -1,7 +1,8 @@
 export type ProductModalProps = {
 	productName: string;
 	stock: number;
+	price: number;
 	updating: boolean;
 	onClose: () => void;
-	onConfirm: (newStock: number) => void;
+	onConfirm: (data: { stock: number; price: number }) => void;
 };

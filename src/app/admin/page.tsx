@@ -1,5 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function AdminPage() {
-	return (
-		<div className="w-full h-screen flex justify-center items-center bg-[#eaebfc] font-[YekanBakh]"></div>
-	);
+	redirect("/admin/products");
 }
