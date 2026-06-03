@@ -6,7 +6,7 @@ function isProtected(path: string) {
 	return PROTECTED_PATHS.some((p) => new RegExp(`^${p}(/.*)?$`).test(path));
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
 	const { pathname } = request.nextUrl;
 
 	const token = request.cookies.get("token")?.value;
