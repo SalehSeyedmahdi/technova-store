@@ -22,6 +22,8 @@ export default function ProductList({
 
 				const params = new URLSearchParams();
 
+				params.append("limit", "100");
+
 				if (category) params.append("category", category);
 				if (brand) params.append("brand", brand);
 				if (sort) params.append("sort", sort);
