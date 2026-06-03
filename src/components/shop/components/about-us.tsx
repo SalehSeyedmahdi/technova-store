@@ -50,7 +50,8 @@ export default function AboutUs() {
 					</p>
 
 					<p>
-						<span className="font-bold">تلفن پشتیبانی:</span> 021-12345678
+						<span className="font-bold">تلفن پشتیبانی:</span>{" "}
+						<span dir="ltr">۰۲۱-۱۲۳۴۵۶۷۸</span>
 					</p>
 
 					<p>
