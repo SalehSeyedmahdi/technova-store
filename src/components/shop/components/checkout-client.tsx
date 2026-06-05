@@ -29,7 +29,6 @@ const getDeliveryDates = () => {
 
 	return [1, 2, 3].map((day) => {
 		const date = new Date(today);
-
 		date.setDate(today.getDate() + day);
 
 		const weekday = date.toLocaleDateString("fa-IR", {
@@ -60,6 +59,16 @@ export default function CheckoutClient() {
 	const [selectedDeliveryDate, setSelectedDeliveryDate] = useState(
 		deliveryDates[0].value,
 	);
+
+	const validItems = useMemo(() => {
+		return cart?.items?.filter((item: any) => item.product) || [];
+	}, [cart]);
+
+	const totalPrice = useMemo(() => {
+		return validItems.reduce((total: number, item: any) => {
+			return total + item.price * item.quantity;
+		}, 0);
+	}, [validItems]);
 
 	const selectedShipping = useMemo(() => {
 		return (
@@ -94,7 +103,15 @@ export default function CheckoutClient() {
 
 	const onSubmit: SubmitHandler<CheckoutFormFields> = async (data) => {
 		try {
+			if (validItems.length === 0) {
+				toast.error("سبد خرید شما خالی است");
+				return;
+			}
+
+			const cartId = getCartId();
+
 			const checkoutData = {
+				cartId,
 				shippingAddress: {
 					fullName: data.fullName,
 					phone: data.phone,
@@ -133,7 +150,7 @@ export default function CheckoutClient() {
 		);
 	}
 
-	if (!cart || cart.items.length === 0) {
+	if (!cart || validItems.length === 0) {
 		return (
 			<div className="w-full bg-white rounded-xl p-6 text-center">
 				<p className="text-gray-500">سبد خرید شما خالی است</p>
@@ -307,19 +324,23 @@ export default function CheckoutClient() {
 					خلاصه سفارش
 				</h2>
 
-				{cart.items.map((item: any) => (
+				{validItems.map((item: any) => (
 					<div
 						key={item._id}
 						className="flex justify-between items-center gap-3 border-b pb-3"
 						dir="rtl"
 					>
 						<img
-							src={item.product.images[0]}
+							src={item.product?.images?.[0] || "/assets/images/no-image.png"}
+							alt={item.product?.name || "محصول"}
 							className="w-16 h-16 object-contain"
 						/>
 
 						<div className="flex-1 text-right">
-							<p className="text-sm font-bold">{item.product.name}</p>
+							<p className="text-sm font-bold">
+								{item.product?.name || "محصول حذف شده"}
+							</p>
+
 							<p className="text-xs text-gray-500">
 								تعداد: {item.quantity.toLocaleString("fa-IR")}
 							</p>
@@ -334,7 +355,7 @@ export default function CheckoutClient() {
 				<div className="flex justify-between items-center pt-3" dir="rtl">
 					<span className="text-sm text-gray-600">جمع محصولات:</span>
 					<span className="font-bold">
-						{cart.totalPrice.toLocaleString("fa-IR")} تومان
+						{totalPrice.toLocaleString("fa-IR")} تومان
 					</span>
 				</div>
 
@@ -358,8 +379,9 @@ export default function CheckoutClient() {
 					dir="rtl"
 				>
 					<span className="font-bold">مبلغ نهایی:</span>
+
 					<span className="font-bold text-blue-800">
-						{cart.totalPrice.toLocaleString("fa-IR")} تومان
+						{totalPrice.toLocaleString("fa-IR")} تومان
 					</span>
 				</div>
 			</div>
