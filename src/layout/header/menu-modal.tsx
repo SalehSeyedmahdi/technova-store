@@ -59,6 +59,17 @@ export default function MenuModal({ onClose }: MenuModalProps) {
 						className="flex justify-center items-center gap-1 cursor-pointer hover:text-blue-700"
 						onClick={() => {
 							onClose();
+							router.push("/cart");
+						}}
+					>
+						<li>سبد خرید</li>
+						<img src="/assets/svg/shopping-cart.svg" className="w-5 h-5" />
+					</div>
+					<hr className="w-full border-t border-gray-300" />
+					<div
+						className="flex justify-center items-center gap-1 cursor-pointer hover:text-blue-700"
+						onClick={() => {
+							onClose();
 							router.push("/products");
 						}}
 					>

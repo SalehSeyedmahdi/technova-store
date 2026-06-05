@@ -7,7 +7,6 @@ export default function Home() {
 
 	return (
 		<div className="w-full flex flex-col gap-8" dir="rtl">
-			{/* Hero Section */}
 			<section className="w-full bg-gradient-to-l from-blue-900 to-blue-700 rounded-3xl overflow-hidden">
 				<div className="flex flex-col-reverse md:flex-row justify-between items-center p-6 md:p-12 gap-8">
 					<div className="flex flex-col gap-5 text-white text-center md:text-right">
@@ -24,7 +23,7 @@ export default function Home() {
 
 						<div className="flex flex-col md:flex-row gap-3 justify-center md:justify-start">
 							<button
-								onClick={() => router.push("/products?category=mobile")}
+								onClick={() => router.push("/products?category=smartphone")}
 								className="bg-white text-blue-800 rounded-xl px-6 py-3 font-bold hover:opacity-80 cursor-pointer"
 							>
 								مشاهده موبایل‌ها
@@ -41,10 +40,9 @@ export default function Home() {
 				</div>
 			</section>
 
-			{/* Categories */}
 			<section className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<button
-					onClick={() => router.push("/products?category=mobile")}
+					onClick={() => router.push("/products?category=smartphone")}
 					className="bg-white rounded-2xl p-6 flex justify-between items-center hover:shadow-lg transition cursor-pointer"
 				>
 					<div className="text-right">
@@ -82,7 +80,6 @@ export default function Home() {
 				</button>
 			</section>
 
-			{/* Features */}
 			<section className="grid grid-cols-1 md:grid-cols-3 gap-4">
 				<div className="bg-white rounded-2xl p-6 text-center">
 					<h3 className="font-bold text-gray-800">ارسال سریع</h3>
@@ -109,7 +106,6 @@ export default function Home() {
 				</div>
 			</section>
 
-			{/* Laptop Banner */}
 			<section className="bg-black rounded-3xl overflow-hidden">
 				<div className="flex flex-col md:flex-row justify-between items-center p-8 md:p-12 gap-8">
 					<div className="text-white text-center md:text-right">

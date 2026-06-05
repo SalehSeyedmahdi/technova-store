@@ -3,7 +3,7 @@
 import { BASE_URL } from "@/constants/BASE_URL";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { getCartId } from "../utils/cart-id";
 
@@ -31,7 +31,22 @@ export default function CartList() {
 		getCart();
 	}, []);
 
+	const validItems = useMemo(() => {
+		return cart?.items?.filter((item: any) => item.product) || [];
+	}, [cart]);
+
+	const totalPrice = useMemo(() => {
+		return validItems.reduce((total: number, item: any) => {
+			return total + item.price * item.quantity;
+		}, 0);
+	}, [validItems]);
+
 	const increaseQuantity = async (item: any) => {
+		if (!item.product) {
+			toast.error("این محصول دیگر در دسترس نیست");
+			return;
+		}
+
 		try {
 			setUpdatingItemId(item._id);
 
@@ -96,7 +111,7 @@ export default function CartList() {
 		);
 	}
 
-	if (!cart || cart.items.length === 0) {
+	if (!cart || validItems.length === 0) {
 		return (
 			<div className="w-full min-h-80 flex items-center justify-center bg-white rounded-xl">
 				<p className="text-gray-500">سبد خرید شما خالی است</p>
@@ -106,20 +121,22 @@ export default function CartList() {
 
 	return (
 		<div className="w-full flex flex-col gap-4" dir="rtl">
-			{cart.items.map((item: any) => (
+			{validItems.map((item: any) => (
 				<div
 					key={item._id}
 					className="w-full flex flex-col md:flex-row justify-between items-center gap-4 bg-white rounded-xl p-4"
 				>
 					<div className="w-full md:w-auto flex items-center gap-4">
 						<img
-							src={item.product.images[0]}
-							alt={item.product.name}
+							src={item.product?.images?.[0] || "/assets/images/no-image.png"}
+							alt={item.product?.name || "محصول"}
 							className="w-24 h-24 object-contain"
 						/>
 
 						<div className="flex flex-col gap-2 text-right">
-							<h2 className="font-bold text-gray-700">{item.product.name}</h2>
+							<h2 className="font-bold text-gray-700">
+								{item.product?.name || "محصول حذف شده"}
+							</h2>
 
 							<p className="text-sm text-gray-500">
 								قیمت: {item.price.toLocaleString("fa-IR")} تومان
@@ -170,17 +187,18 @@ export default function CartList() {
 
 			<div className="w-full flex flex-row-reverse justify-between items-center rounded-xl bg-white px-8 py-6">
 				<button
-					className="text-[12px] md:text-[15px] text-[#ffffff] rounded-md bg-blue-600 hover:bg-blue-700 cursor-pointer px-3 py-2 md:px-6 md:py-3"
+					className="text-[12px] md:text-[15px] text-white rounded-md bg-blue-600 hover:bg-blue-700 cursor-pointer px-3 py-2 md:px-6 md:py-3"
 					onClick={() => router.push("/checkout")}
 				>
 					تایید و تکمیل سفارش
 				</button>
+
 				<div className="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2">
 					<span className="font-bold text-[12px] md:text-[15px] text-gray-500">
 						جمع کل:
 					</span>
 					<span className="font-bold text-[15px] md:text-[18px] text-blue-800">
-						{cart.totalPrice.toLocaleString("fa-IR")} تومان
+						{totalPrice.toLocaleString("fa-IR")} تومان
 					</span>
 				</div>
 			</div>
